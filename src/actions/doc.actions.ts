@@ -1,4 +1,5 @@
 'use server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 export async function getDocuments() {
@@ -31,6 +32,18 @@ export async function persistDocument(docId: string, content: string) {
   }
 }
 
+export async function updateDocumentTitle(docId: string, title: string) {
+  try {
+    await prisma.document.update({
+      where: { id: docId },
+      data: { title },
+    })
+  }
+  catch (error) {
+    console.error('Error updating document title:', error)
+  }
+}
+
 export async function createDocument() {
   try {
     const newDoc = await prisma.document.create({
@@ -43,5 +56,15 @@ export async function createDocument() {
   }
   catch (error) {
     console.error('Error creating document:', error)
+  }
+}
+
+export async function deleteDocument(id: string) {
+  try {
+    await prisma.document.delete({ where: { id } })
+    revalidatePath('/')
+  }
+  catch (error) {
+    console.error('Error deleting document:', error)
   }
 }
