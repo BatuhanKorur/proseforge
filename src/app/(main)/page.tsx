@@ -1,37 +1,26 @@
-import {getDocuments} from "@/actions/doc.actions";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import Link from "next/link";
+import { getDocuments } from '@/actions/doc.actions'
+import DocHeading from '@/app/(main)/DocHeading'
+import DocCard from '@/components/doc-card'
 
-export default async function MainPage(){
-    const docs = await getDocuments()
-    if(!docs) return null
+export default async function MainPage() {
+  const docs = await getDocuments()
+  if (!docs)
+    return null
 
-    if(docs.length === 0) {
-        return (
-            <p>No documents found</p>
-        )
-    }
-
-
-
-
-
-
+  if (docs.length === 0) {
     return (
-        <div className="grid grid-cols-3 gap-5">
-            {docs.map(doc => (
-                <Link href={`/doc/${doc.id}`} key={doc.id}>
-                    <Card >
-                        <CardHeader>
-                            <CardTitle>{ doc.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Some content</p>
-                        </CardContent>
-                    </Card>
-                </Link>
-                ))
-             }
-        </div>
+      <p>No documents found</p>
     )
+  }
+
+  return (
+    <div>
+      <DocHeading />
+      <div className="grid grid-cols-3 gap-5">
+        {docs.map(doc => (
+          <DocCard doc={doc} key={doc.id} />
+        ))}
+      </div>
+    </div>
+  )
 }
