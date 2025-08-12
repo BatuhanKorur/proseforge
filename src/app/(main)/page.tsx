@@ -1,5 +1,6 @@
-import getDocuments from "@/actions/doc.actions";
+import {getDocuments} from "@/actions/doc.actions";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import Link from "next/link";
 
 export default async function MainPage(){
     const docs = await getDocuments()
@@ -12,10 +13,15 @@ export default async function MainPage(){
     }
 
 
+
+
+
+
     return (
         <div className="grid grid-cols-3 gap-5">
             {docs.map(doc => (
-                    <Card key={doc.id}>
+                <Link href={`/doc/${doc.id}`} key={doc.id}>
+                    <Card >
                         <CardHeader>
                             <CardTitle>{ doc.title}</CardTitle>
                         </CardHeader>
@@ -23,6 +29,7 @@ export default async function MainPage(){
                             <p>Some content</p>
                         </CardContent>
                     </Card>
+                </Link>
                 ))
              }
         </div>
