@@ -1,7 +1,13 @@
 import { prisma } from '@/lib/prisma'
+import DocSeed from "./doc.seed";
 
 async function main(){
     console.log('Seeding...')
+    try {
+        await DocSeed()
+    } catch (e) {
+        console.error('Error on seed')
+    }
 }
 
 main().then(async () => {
