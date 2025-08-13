@@ -1,8 +1,5 @@
-import { useEffect } from 'react'
-import { getWordData } from '@/actions/ai/word.actions'
-
-export default function WordDetails({ word }: { word: string }) {
-  const fetchWordData = async (word: string) => {
+export default function WordPanel({ word }: { word: string }) {
+/*  const fetchWordData = async (word: string) => {
     try {
       const result = await getWordData(word)
       console.log(result)
@@ -16,10 +13,10 @@ export default function WordDetails({ word }: { word: string }) {
     if (word) {
       fetchWordData(word)
     }
-  }, [word])
+  }, [word]) */
 
   return (
-    <div className="px-6 py-14">
+    <div className="px-3 pt-6">
       <p>{ word }</p>
     </div>
   )

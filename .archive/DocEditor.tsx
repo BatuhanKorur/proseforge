@@ -2,9 +2,9 @@
 import type { Document } from '@/generated/prisma'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { persistDocument, updateDocumentTitle } from '@/actions/doc.actions'
-import WordDetails from '@/app/(main)/doc/[slug]/WordDetails'
+import WordPanel from '@/app/(main)/doc/[slug]/word-panel'
 import { Button } from '@/components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { useShortcut } from '@/hooks/use-keyboard'
@@ -14,19 +14,6 @@ export default function DocEditor({ doc }: {
 }) {
   const [title, setTitle] = useState(doc?.title || '')
   const [selectedWord, setSelectedWord] = useState('')
-
-  const initialContent = useMemo(() => {
-    if (!doc?.content) {
-      return { type: 'doc', content: [{ type: 'paragraph' }] }
-    }
-    try {
-      return JSON.parse(doc.content as string)
-    }
-    catch {
-      // Fallback to an empty document if parsing fails
-      return { type: 'doc', content: [{ type: 'paragraph' }] }
-    }
-  }, [doc?.content])
 
   const handleWordSelected = useCallback((word: string) => {
     setSelectedWord(word)
@@ -94,7 +81,7 @@ export default function DocEditor({ doc }: {
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={25} minSize={10}>
-        <WordDetails word={selectedWord} />
+        <WordPanel word={selectedWord} />
       </ResizablePanel>
     </ResizablePanelGroup>
   )

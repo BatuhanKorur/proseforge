@@ -1,5 +1,5 @@
 import { getDocumentById } from '@/actions/doc.actions'
-import DocEditor from '@/app/(main)/doc/[slug]/DocEditor'
+import DocView from '@/app/(main)/doc/[slug]/doc-view'
 
 export default async function DocPage({ params }: { params: { slug: string } }) {
   const { slug } = await params
@@ -12,7 +12,7 @@ export default async function DocPage({ params }: { params: { slug: string } }) 
 
   return (
     <>
-      <DocEditor doc={doc} />
+      <DocView doc={doc} />
     </>
   )
 }

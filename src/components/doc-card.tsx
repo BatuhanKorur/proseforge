@@ -73,7 +73,12 @@ function DeleteButton({ id, title }: { id: string, title: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteDocument}>Continue</AlertDialogAction>
+          <AlertDialogAction
+            onClick={handleDeleteDocument}
+            className="bg-destructive text-foreground"
+          >
+            Delete
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

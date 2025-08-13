@@ -1,0 +1,148 @@
+'use client'
+import type { Document } from '@/generated/prisma'
+import { CharacterCount } from '@tiptap/extensions'
+import { EditorContent, useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { ArrowRightToLine } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { persistDocument } from '@/actions/doc.actions'
+import WordPanel from '@/app/(main)/doc/[slug]/word-panel'
+import { Button } from '@/components/ui/button'
+import { useShortcut } from '@/hooks/use-keyboard'
+import { SelectionWatcher } from '@/lib/selection-watcher'
+import { useDocStore } from '@/stores/doc.store'
+
+function parseDocumentContent(content: string | null) {
+  if (!content) {
+    return { type: 'doc', content: [{ type: 'paragraph' }] }
+  }
+  try {
+    return JSON.parse(content)
+  }
+  catch (e) {
+    return { type: 'doc', content: [{ type: 'paragraph' }] }
+  }
+}
+
+export default function DocView({ doc }: {
+  doc: Document
+}) {
+  const { saveSignal, setSaveSignal, pingSavedPulse } = useDocStore()
+  const [collapsed, setCollapsed] = useState(false)
+  const [characterCount, setCharacterCount] = useState(0)
+  const [wordCount, setWordCount] = useState(0)
+
+  // Setup initial content from the document
+  const initialContent = useMemo(() => {
+    return parseDocumentContent(doc?.content as string)
+  }, [doc.content])
+
+  // Setup the editor instance
+  const editor = useEditor({
+    extensions: [StarterKit, CharacterCount, SelectionWatcher.configure({
+      strict: true, // only word/sentence/paragraph; change to false to capture all selections
+      onMatch: ({ kind, text, wordCount, from, to }) => {
+        // Decide what to do:
+        if (kind === 'word') {
+          // e.g., show synonyms popup
+          console.log('WORD:', text)
+        }
+        else if (kind === 'sentence') {
+          // e.g., run grammar/clarity checks
+          console.log('SENTENCE:', text)
+        }
+        else if (kind === 'paragraph') {
+          // e.g., run paragraph-level scoring
+          console.log('PARAGRAPH:', text)
+        }
+        // 'other' is ignored in strict mode
+      },
+    })],
+    content: initialContent,
+    immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        class: 'doc-edit',
+      },
+    },
+    onUpdate: ({ editor }) => {
+      setCharacterCount(editor.storage.characterCount.characters())
+      setWordCount(editor.storage.characterCount.words())
+    },
+  })
+
+  // Save the current document when necessary
+  const saveCurrentDoc = useCallback(async () => {
+    const json = editor?.getJSON()
+    if (!json) {
+      return
+    }
+    try {
+      await persistDocument(doc.id, JSON.stringify(json))
+      pingSavedPulse()
+    }
+    catch (e) {
+      console.error('Error persisting document:', e)
+    }
+  }, [doc.id, editor, pingSavedPulse])
+
+  useEffect(() => {
+    if (saveSignal) {
+      saveCurrentDoc()
+      setSaveSignal(false)
+    }
+  }, [saveCurrentDoc, saveSignal, setSaveSignal])
+
+  useShortcut('ctrl+s', saveCurrentDoc)
+  return (
+    <>
+      <div className="flex h-[90dvh] overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+            <div className="mx-auto w-full max-w-3xl">
+              <EditorContent editor={editor} />
+            </div>
+          </div>
+
+          <footer className="mx-auto w-full max-w-3xl shrink-0 border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3 pt-3 text-xs text-muted-foreground">
+            <div className="flex items-center justify-between gap-3">
+              <span>
+                Characters:
+                { characterCount }
+              </span>
+              <span>
+                Words:
+                { wordCount }
+              </span>
+            </div>
+          </footer>
+        </div>
+
+        <aside
+          id="right-panel"
+          aria-expanded={!collapsed}
+          onClick={collapsed ? () => setCollapsed(false) : undefined}
+          role={collapsed ? 'button' : undefined}
+          tabIndex={collapsed ? 0 : -1}
+          title={collapsed ? 'Expand' : undefined}
+          className={`${collapsed ? 'w-[60px] cursor-pointer bg-muted/50 rounded-xl transition duration-200 ease-in-out hover:bg-muted/100' : 'w-4/12'} relative overflow-hidden transition-[width] duration-300 ease-in-out`}
+        >
+          <div
+            id="right-panel-content"
+            aria-hidden={collapsed}
+            className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full p-4 transition-opacity duration-200`}
+          >
+            <Button
+              onClick={() => setCollapsed(true)}
+              variant="ghost"
+              size="icon"
+            >
+              <ArrowRightToLine />
+            </Button>
+            <WordPanel word="coffee" />
+          </div>
+        </aside>
+      </div>
+    </>
+  )
+}
