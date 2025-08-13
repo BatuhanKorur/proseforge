@@ -10,6 +10,7 @@ import {
   MoreHorizontal,
   PawPrint,
   Send,
+  Settings,
   Share,
   Trash2,
 } from 'lucide-react'
@@ -73,6 +74,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const [showSettings, setShowSettings] = useState(false)
   const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('checking')
 
   useEffect(() => {
@@ -102,6 +104,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
 
   const statusText = ollamaStatus === 'running' ? 'Online' : ollamaStatus === 'offline' ? 'Offline' : 'Checking...'
 
+  const handleOpenSettings = () => {
+    console.log('Hello')
+  }
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -127,7 +133,20 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavFavorites favorites={data.favorites} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <SidebarGroup {...props} className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem onClick={handleOpenSettings}>
+                <SidebarMenuButton asChild size="sm">
+                  <div>
+                    <Settings />
+                    <p>Settings</p>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

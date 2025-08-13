@@ -1,4 +1,5 @@
 'use client'
+import { Bookmark } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useDocStore } from '@/stores/doc.store'
@@ -36,8 +37,12 @@ export default function DocHeader({ title, docId }: {
         <Button size="sm" onClick={handleSave}>
           Save
         </Button>
-        <Button size="sm" onClick={handleFavorite}>
-          X
+        <Button
+          size="icon"
+          onClick={handleFavorite}
+          variant="outline"
+        >
+          <Bookmark />
         </Button>
       </div>
     </div>

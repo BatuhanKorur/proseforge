@@ -1,5 +1,5 @@
 import { getDocuments } from '@/actions/doc.actions'
-import DocHeading from '@/app/(main)/DocHeading'
+import PageHeading from '@/app/(main)/page-heading'
 import DocCard from '@/components/doc-card'
 
 export default async function MainPage() {
@@ -15,7 +15,7 @@ export default async function MainPage() {
 
   return (
     <div>
-      <DocHeading />
+      <PageHeading />
       <div className="grid grid-cols-3 gap-5">
         {docs.map(doc => (
           <DocCard doc={doc} key={doc.id} />

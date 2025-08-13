@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { createDocument } from '@/actions/doc.actions'
 import { Button } from '@/components/ui/button'
 
-export default function DocHeading() {
+export default function PageHeading() {
   const router = useRouter()
 
   const handleNewDocument = async () => {
