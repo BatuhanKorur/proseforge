@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9689bb51-0c63-43df-bafb-45bd03e081b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-bubble.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/actions/lama.actions.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/@header/doc/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/@header/doc/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/word-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/word-panel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/selection-watcher.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/@header/default.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/@header/default.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app-sidebar.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>

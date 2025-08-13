@@ -1,20 +1,22 @@
 'use client'
 import type { LucideIcon } from 'lucide-react'
+import type { ComponentProps } from 'react'
+import type { OllamaStatus } from '@/types'
 import {
   ChevronRight,
-  Command,
   FileText,
   Folder,
   LifeBuoy,
   MoreHorizontal,
-  Package,
+  PawPrint,
   Send,
   Share,
   Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
-
+import { useEffect, useState } from 'react'
 import * as React from 'react'
+import { pingOllama } from '@/actions/lama.actions'
 import { NavUser } from '@/components/nav-user'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
@@ -54,11 +56,6 @@ const data = {
       url: '/',
       icon: FileText,
     },
-    {
-      title: 'Saved Words',
-      url: 'words',
-      icon: Package,
-    },
   ],
   navSecondary: [
     {
@@ -75,7 +72,36 @@ const data = {
   favorites: [],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('checking')
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const ok = await pingOllama()
+        if (!cancelled)
+          setOllamaStatus(ok ? 'running' : 'offline')
+      }
+      catch {
+        if (!cancelled)
+          setOllamaStatus('offline')
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const statusDotClass = ollamaStatus === 'running'
+    ? 'bg-green-500'
+    : ollamaStatus === 'offline'
+      ? 'bg-red-500'
+      : 'bg-yellow-500 animate-pulse'
+
+  const statusText = ollamaStatus === 'running' ? 'Online' : ollamaStatus === 'offline' ? 'Offline' : 'Checking...'
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -84,11 +110,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                  <PawPrint className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Prose Forge</span>
-                  <span className="truncate text-xs">Yolo!</span>
+                  <span className="truncate text-xs flex items-center gap-1">
+                    <span className={`inline-block size-2 rounded-full ${statusDotClass}`} />
+                    {statusText}
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
