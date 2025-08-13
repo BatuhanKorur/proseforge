@@ -113,7 +113,7 @@ export default function DocView({ doc }: {
       <div className="flex h-[90dvh] overflow-hidden">
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-            <div className="mx-auto w-full max-w-3xl">
+            <div className="mx-auto w-full max-w-3xl py-12">
               { editor && (
                 <DocBubble
                   editor={editor}

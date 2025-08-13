@@ -3,6 +3,7 @@ import { Bookmark } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useDocStore } from '@/stores/doc.store'
+import { useUserStore } from '@/stores/user.store'
 
 export default function DocHeader({ title, docId }: {
   title: string
@@ -10,6 +11,7 @@ export default function DocHeader({ title, docId }: {
 }) {
   const [docTitle, setDocTitle] = useState(title)
   const { showSavedPulse, setSaveSignal } = useDocStore()
+  const { setFavorite } = useUserStore()
 
   const handleSave = async () => {
     setSaveSignal(true)
@@ -18,7 +20,7 @@ export default function DocHeader({ title, docId }: {
     console.log('Handle Title Save')
   }
   const handleFavorite = async () => {
-    console.log('Handle Favorite')
+    setFavorite(docId, docTitle)
   }
   return (
     <div className="flex items-center justify-between w-full">

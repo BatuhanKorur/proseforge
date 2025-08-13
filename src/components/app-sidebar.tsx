@@ -7,12 +7,9 @@ import {
   FileText,
   Folder,
   LifeBuoy,
-  MoreHorizontal,
   PawPrint,
   Send,
   Settings,
-  Share,
-  Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -20,13 +17,7 @@ import * as React from 'react'
 import { pingOllama } from '@/actions/lama.actions'
 import { NavUser } from '@/components/nav-user'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+
 import {
   Sidebar,
   SidebarContent,
@@ -42,8 +33,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  useSidebar,
 } from '@/components/ui/sidebar'
+import { useUserStore } from '@/stores/user.store'
 
 const data = {
   user: {
@@ -70,12 +61,12 @@ const data = {
       icon: Send,
     },
   ],
-  favorites: [],
 }
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const [showSettings, setShowSettings] = useState(false)
   const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('checking')
+  const favorites = useUserStore(s => s.favorites)
 
   useEffect(() => {
     let cancelled = false
@@ -132,7 +123,23 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavFavorites favorites={data.favorites} />
+        <SidebarGroup>
+          <SidebarGroupLabel>Favorites</SidebarGroupLabel>
+          <SidebarMenu>
+            { favorites.map(favorite => (
+              <SidebarMenuItem key={favorite.id}>
+                <SidebarMenuButton asChild>
+                  <Link href={favorite.id}>
+                    <div className="flex items-center gap-2">
+                      <Folder className="size-3" />
+                      <span>{favorite.title}</span>
+                    </div>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
         <SidebarGroup {...props} className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -211,99 +218,6 @@ export function NavMain({
           </Collapsible>
         ))}
       </SidebarMenu>
-    </SidebarGroup>
-  )
-}
-
-export function NavFavorites({
-  favorites,
-}: {
-  favorites: {
-    name: string
-    url: string
-    icon: LucideIcon
-  }[]
-}) {
-  const { isMobile } = useSidebar()
-
-  return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Favorites</SidebarGroupLabel>
-      <SidebarMenu>
-        {favorites.map(item => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48"
-                side={isMobile ? 'bottom' : 'right'}
-                align={isMobile ? 'end' : 'start'}
-              >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Share className="text-muted-foreground" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        ))}
-        <SidebarMenuItem>
-          <SidebarMenuButton>
-            <MoreHorizontal />
-            <span>More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    </SidebarGroup>
-  )
-}
-
-export function NavSecondary({
-  items,
-  ...props
-}: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-  }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
-  return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map(item => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
     </SidebarGroup>
   )
 }
