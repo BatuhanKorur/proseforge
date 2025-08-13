@@ -4,12 +4,11 @@ import { CharacterCount } from '@tiptap/extensions'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { ArrowRightToLine } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { persistDocument } from '@/actions/doc.actions'
-import WordPanel from '@/app/(main)/doc/[slug]/word-panel'
+import DocBubble from '@/app/(main)/doc/[slug]/doc-bubble'
 import { Button } from '@/components/ui/button'
 import { useShortcut } from '@/hooks/use-keyboard'
-import { SelectionWatcher } from '@/lib/selection-watcher'
 import { useDocStore } from '@/stores/doc.store'
 
 function parseDocumentContent(content: string | null) {
@@ -31,33 +30,44 @@ export default function DocView({ doc }: {
   const [collapsed, setCollapsed] = useState(false)
   const [characterCount, setCharacterCount] = useState(0)
   const [wordCount, setWordCount] = useState(0)
+  const [selectedFrom, setSelectedFrom] = useState(0)
+  const [selectedTo, setSelectedTo] = useState(0)
+  const [selected, setSelected] = useState('')
+  const [isText, setIsText] = useState(false)
+
+  const resetSelected = () => {
+    setSelected('')
+    setIsText(false)
+    setSelectedFrom(0)
+    setSelectedTo(0)
+  }
 
   // Setup initial content from the document
   const initialContent = useMemo(() => {
     return parseDocumentContent(doc?.content as string)
   }, [doc.content])
 
+  const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const debouncedSelectionUpdate = useCallback((selection: any, editorInstance: any) => {
+    if (selectionTimeoutRef.current) {
+      clearTimeout(selectionTimeoutRef.current)
+    }
+
+    // Set new timeout
+    selectionTimeoutRef.current = setTimeout(() => {
+      if (selection.empty) {
+        resetSelected()
+        return
+      }
+      const selected = editorInstance.state.doc.textBetween(selection.from, selection.to)
+      setSelected(selected)
+      setIsText(selected.includes(' ') && selected.trim().length > 10)
+    }, 300) // 0.3 second delay
+  }, [])
+
   // Setup the editor instance
   const editor = useEditor({
-    extensions: [StarterKit, CharacterCount, SelectionWatcher.configure({
-      strict: true, // only word/sentence/paragraph; change to false to capture all selections
-      onMatch: ({ kind, text, wordCount, from, to }) => {
-        // Decide what to do:
-        if (kind === 'word') {
-          // e.g., show synonyms popup
-          console.log('WORD:', text)
-        }
-        else if (kind === 'sentence') {
-          // e.g., run grammar/clarity checks
-          console.log('SENTENCE:', text)
-        }
-        else if (kind === 'paragraph') {
-          // e.g., run paragraph-level scoring
-          console.log('PARAGRAPH:', text)
-        }
-        // 'other' is ignored in strict mode
-      },
-    })],
+    extensions: [StarterKit, CharacterCount],
     content: initialContent,
     immediatelyRender: false,
     editorProps: {
@@ -68,6 +78,10 @@ export default function DocView({ doc }: {
     onUpdate: ({ editor }) => {
       setCharacterCount(editor.storage.characterCount.characters())
       setWordCount(editor.storage.characterCount.words())
+    },
+    onSelectionUpdate: ({ editor }) => {
+      const selection = editor.state.selection
+      debouncedSelectionUpdate(selection, editor)
     },
   })
 
@@ -100,6 +114,12 @@ export default function DocView({ doc }: {
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             <div className="mx-auto w-full max-w-3xl">
+              { editor && (
+                <DocBubble
+                  editor={editor}
+                  isText={isText}
+                />
+              )}
               <EditorContent editor={editor} />
             </div>
           </div>
@@ -139,7 +159,9 @@ export default function DocView({ doc }: {
             >
               <ArrowRightToLine />
             </Button>
-            <WordPanel word="coffee" />
+            <div>
+              <p>yolo</p>
+            </div>
           </div>
         </aside>
       </div>

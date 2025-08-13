@@ -121,6 +121,9 @@
   }
 }
 
+.tiptap {
+  @apply focus:outline-none;
+}
 .has-focus {
   @apply bg-foreground/7;
 }
