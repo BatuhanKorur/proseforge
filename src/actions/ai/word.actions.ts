@@ -19,6 +19,7 @@ export async function lookupWord(word: string) {
         Return a response, in the following format:
         
         {
+          word: "${word}",
           definition: "Meaning of the word",
           synonyms: ["synonym1", "synonym2",...]
         }

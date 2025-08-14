@@ -1,8 +1,44 @@
-import type { Editor } from '@tiptap/core'
 import type { ComponentProps } from 'react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { useDocStore } from '@/stores/doc.store'
 
+export default function DocBubble() {
+  const { editorInstance, selectionData, getRewriteSuggestions, getLookupResults } = useDocStore()
+  if (!editorInstance)
+    return null
+
+  const closeBubble = () => {
+    const pos = editorInstance.state.selection.to
+    editorInstance.chain().focus().setTextSelection(pos).run()
+  }
+
+  const handleTextRewrite = () => {
+    getRewriteSuggestions()
+    closeBubble()
+  }
+
+  const handleWordLookup = () => {
+    getLookupResults()
+    closeBubble()
+  }
+
+  return (
+    <BubbleMenu
+      editor={editorInstance}
+      updateDelay={300}
+      options={{
+        placement: 'bottom',
+        offset: 8,
+      }}
+    >
+      <div className="bg-popover text-popover-foreground z-50 w-52 rounded border p-1.5 shadow-lg outline-hidden">
+        <BubbleButton onClick={selectionData.isText ? handleTextRewrite : handleWordLookup}>
+          <p>{ selectionData.isText ? 'Rewrite with AI' : 'Lookup Word'}</p>
+        </BubbleButton>
+      </div>
+    </BubbleMenu>
+  )
+}
 function BubbleButton({ children, ...props }: ComponentProps<'button'>) {
   return (
     <button
@@ -12,43 +48,5 @@ function BubbleButton({ children, ...props }: ComponentProps<'button'>) {
     >
       { children }
     </button>
-  )
-}
-export default function DocBubble({
-  editor,
-  isText,
-  selected,
-}: { editor: Editor, isText: boolean, selected: string }) {
-  const docStore = useDocStore()
-  const closeBubble = () => {
-    const pos = editor.state.selection.to
-    editor.chain().focus().setTextSelection(pos).run()
-  }
-
-  const handleTextRewrite = () => {
-    docStore.triggerRewrite(selected)
-    closeBubble()
-  }
-
-  const handleWordLookup = () => {
-    docStore.triggerLookup(selected)
-    closeBubble()
-  }
-
-  return (
-    <BubbleMenu
-      editor={editor}
-      updateDelay={300}
-      options={{
-        placement: 'bottom',
-        offset: 8,
-      }}
-    >
-      <div className="bg-popover text-popover-foreground z-50 w-52 rounded border p-1.5 shadow-lg outline-hidden">
-        <BubbleButton onClick={isText ? handleTextRewrite : handleWordLookup}>
-          <p>{ isText ? 'Rewrite with AI' : 'Lookup Word'}</p>
-        </BubbleButton>
-      </div>
-    </BubbleMenu>
   )
 }

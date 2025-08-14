@@ -13,15 +13,3 @@ export function extractPreviewText(editor: Editor | null): string {
   const text = editor.getText()
   return text.slice(0, 240).trim()
 }
-
-export function parseDocumentContent(content: string | null) {
-  if (!content) {
-    return { type: 'doc', content: [{ type: 'paragraph' }] }
-  }
-  try {
-    return JSON.parse(content)
-  }
-  catch {
-    return { type: 'doc', content: [{ type: 'paragraph' }] }
-  }
-}

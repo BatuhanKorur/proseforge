@@ -1,15 +1,22 @@
 'use client'
-import type { ReactNode } from 'react'
 import { ArrowRightToLine, Ellipsis } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import Loader from '@/components/ui/loader'
 import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
-export function DocPanel({ children }: { children: ReactNode }) {
+export function DocPanel() {
+  const { isWaitingResponse, currentAction } = useDocStore()
   const [collapsed, setCollapsed] = useState(false)
 
+  useEffect(() => {
+    if (isWaitingResponse) {
+      console.log('OK something changed bro')
+      console.log('current action:', currentAction)
+    }
+  }, [isWaitingResponse, currentAction])
   return (
     <aside
       id="right-panel"
@@ -43,34 +50,82 @@ export function DocPanel({ children }: { children: ReactNode }) {
           </Button>
         </div>
         <div className="px-4.5">
-          <p>hi</p>
+          { isWaitingResponse && <Loader className="h-80" /> }
+          { !isWaitingResponse && currentAction === 'lookup' && (
+            <LookupPanel />
+          )}
+          { !isWaitingResponse && currentAction === 'rewrite' && (
+            <RewritePanel />
+          )}
         </div>
       </div>
     </aside>
   )
 }
-export function DocRewrite() {
-  const { isRewriting, rewriteResults } = useDocStore()
 
+function LookupPanel() {
+  const { lookupResults, editorInstance, selectionData } = useDocStore()
+  if (!lookupResults) {
+    return (<div></div>)
+  }
+  const { word, definition, synonyms } = lookupResults
+  function handleWordFlip(synonym: string) {
+    if (!editorInstance || !selectionData) {
+      console.error('Editor instance or selection data not available')
+      return
+    }
+    editorInstance
+      .chain()
+      .focus()
+      .setTextSelection({ from: selectionData.from, to: selectionData.to })
+      .insertContent(synonym)
+      .run()
+  }
   return (
-    <DocPanel>
-      <p>Doc Panel</p>
-      { isRewriting && <Loader className="h-80" /> }
-      { !isRewriting && (
-        <div className="flex flex-col space-y-2">
-          { rewriteResults && rewriteResults.length > 0 && (
-            rewriteResults.map((result, index) => (
+    <div className="flex flex-col gap-3">
+      <div>
+        <p className="text-2xl font-semibold mb-1">{ word }</p>
+      </div>
+      <div className="space-y-1">
+        <Label>Definition</Label>
+        <p>{ definition }</p>
+      </div>
+      <div className="space-y-1">
+        <Label>Synonyms</Label>
+        <div className="flex flex-wrap gap-2">
+          { synonyms && synonyms.length > 0 && (
+            synonyms.map((synonym: string, index: number) => (
               <button
                 type="button"
+                className="text-left inline-flex border cursor-pointer px-3 py-1 rounded text-[15px] leading-[26px] transition duration-200 ease-in-out hover:bg-muted"
                 key={index}
-                className="border p-3 rounded cursor-pointer text-left transition duration-200 ease-in-out hover:bg-muted"
+                onClick={() => handleWordFlip(synonym)}
               >
-                <p className="text-sm leading-5.5">{result}</p>
+                <p>
+                  {synonym}
+                </p>
               </button>
             ))
           )}
         </div>
-      )}
-    </DocPanel>
+      </div>
+    </div>
+  )
+}
+
+function RewritePanel() {
+  const { rewriteResults, editorInstance, selectionData } = useDocStore()
+  if (!rewriteResults) {
+    return (<div></div>)
+  }
+  return (
+    <div>
+      {rewriteResults.map((result: string, index: number) => (
+        <div key={index}>
+          <p>{result}</p>
+        </div>
+      ))}
+      <p>Rewrite Panel</p>
+    </div>
   )
 }
