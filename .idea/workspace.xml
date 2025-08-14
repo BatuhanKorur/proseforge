@@ -5,23 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9689bb51-0c63-43df-bafb-45bd03e081b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/public/pf-logo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/doc-browser.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/logo.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/error-layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/seed/doc.seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/seed/doc.seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/seed/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/seed/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-bubble.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-bubble.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-editor.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/page-heading.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actions/doc.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/doc.actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actions/review.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/review.actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(main)/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app-sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/editor.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/prisma.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prisma.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/doc-browser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doc-browser.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

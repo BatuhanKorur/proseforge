@@ -4,7 +4,11 @@ import { prisma } from '@/lib/prisma'
 
 export async function getDocuments() {
   try {
-    return await prisma.document.findMany()
+    return await prisma.document.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
   }
   catch (e) {
     console.error('Error fetching documents:', e)
@@ -49,13 +53,12 @@ export async function updateDocumentTitle(docId: string, title: string) {
 
 export async function createDocument() {
   try {
-    const newDoc = await prisma.document.create({
+    return await prisma.document.create({
       data: {
         title: 'Untitled',
         content: JSON.stringify({ type: 'doc', content: [] }),
       },
     })
-    return newDoc
   }
   catch (error) {
     console.error('Error creating document:', error)

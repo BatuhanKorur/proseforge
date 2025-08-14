@@ -6,16 +6,6 @@ import retextEnglish from 'retext-english'
 import retextReadability from 'retext-readability'
 import retextSpell from 'retext-spell'
 
-function groupBySource(messages: any[]) {
-  return messages.reduce<Record<string, any[]>>((acc, message) => {
-    const sourceKey = message.source ?? 'unknown'
-    if (!acc[sourceKey])
-      acc[sourceKey] = []
-    acc[sourceKey].push(message)
-    return acc
-  }, {})
-}
-
 export interface SpellCheckResult {
   word: string
   expected: string[]
@@ -33,6 +23,16 @@ export interface AnalysisResult {
   spellcheck: SpellCheckResult[]
   spellcheckWords: string[]
   readability: ReadabilityResult[]
+}
+
+function groupBySource(messages: any[]) {
+  return messages.reduce<Record<string, any[]>>((acc, message) => {
+    const sourceKey = message.source ?? 'unknown'
+    if (!acc[sourceKey])
+      acc[sourceKey] = []
+    acc[sourceKey].push(message)
+    return acc
+  }, {})
 }
 
 export async function analyze(text: string): Promise<AnalysisResult> {
@@ -54,45 +54,52 @@ export async function analyze(text: string): Promise<AnalysisResult> {
   }
 }
 
-function extractReadabilityResults(messages: any[]) {
-  return messages.map((msg) => {
-    const reason = msg.reason ?? ''
-    return {
-      sentence: msg.actual ?? '',
-      reason,
-      score: parseReadabilityScore(msg.reason),
+function extractReadabilityResults(messages: any[] = []): ReadabilityResult[] {
+  return messages.reduce<ReadabilityResult[]>((acc, msg) => {
+    const score = parseReadabilityScore(msg.reason)
+    if (score) {
+      acc.push({
+        reason: msg.reason,
+        sentence: msg.actual ?? '',
+        score,
+      })
     }
-  })
+    return acc
+  }, [])
 }
-function extractSpellcheckResults(messages: any[]) {
-  const wordsList = new Set<string>()
-  const spellcheckItems = messages.map((msg) => {
-    const word = msg.ruleId ?? msg.message ?? ''
-    if (word) {
-      wordsList.add(word)
+
+function extractSpellcheckResults(messages: any[] = []): { spellcheckItems: SpellCheckResult[], spellcheckWords: string[] } {
+  const spellcheckItems: SpellCheckResult[] = []
+  const spellcheckWords = new Set<string>()
+
+  for (const msg of messages) {
+    // 'actual' contains the misspelled word from the text.
+    const misspelledWord = msg.actual
+    if (misspelledWord) {
+      spellcheckWords.add(misspelledWord)
+      spellcheckItems.push({
+        word: misspelledWord,
+        actual: misspelledWord,
+        expected: msg.expected ?? [],
+        message: msg.reason,
+      })
     }
-    return {
-      word,
-      expected: msg.expected,
-      message: msg.message,
-      actual: msg.actual,
-    }
-  })
+  }
+
   return {
     spellcheckItems,
-    spellcheckWords: Array.from(wordsList),
+    spellcheckWords: Array.from(spellcheckWords),
   }
 }
 
 function parseReadabilityScore(text: string | undefined | null): [number, number] | null {
   if (!text)
     return null
-  // matches "5 out of 7", "5 of 7", "5/7", "5 out of 7 algorithms", etc.
-  const m = text.match(/(\d+)\s*(?:out of|of|\/)\s*(\d+)/i)
-  if (!m)
+  const match = text.match(/(\d+)\s*(?:out of|of|\/)\s*(\d+)/i)
+  if (!match)
     return null
-  const a = Number(m[1])
-  const b = Number(m[2])
+  const a = Number(match[1])
+  const b = Number(match[2])
   if (Number.isFinite(a) && Number.isFinite(b))
     return [a, b]
   return null

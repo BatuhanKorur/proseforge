@@ -15,7 +15,7 @@ import { DocInspectorType, DocPanelType } from '@/types'
 
 export function DocInspector() {
   const { isWaitingResponse, currentAction, editorInstance } = useDocStore()
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   const [inspectorPanel, setInspectorPanel] = useState<DocInspectorType>(DocInspectorType.ANALYSIS)
   const [activePanel, setActivePanel] = useState(DocPanelType.SPELLCHECK)
 
