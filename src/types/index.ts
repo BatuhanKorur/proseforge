@@ -19,3 +19,8 @@ export enum DocPanelType {
   SPELLCHECK,
   READABILITY,
 }
+
+export enum DocMainPanelType {
+  ASSIST,
+  ANALYSIS,
+}

@@ -1,16 +1,17 @@
 'use client'
+
 import type { ComponentProps } from 'react'
 import type { ReadabilityResult, SpellCheckResult } from '@/actions/review.actions'
-import { ArrowRightToLine, Ellipsis } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { useEffect, useState } from 'react'
 import { analyze } from '@/actions/review.actions'
+import AssistPanel from '@/app/(main)/doc/[slug]/panels/assist-panel'
 import ReadabilityPanel from '@/app/(main)/doc/[slug]/panels/readability-panel'
 import SpellCheckPanel from '@/app/(main)/doc/[slug]/panels/spell-check-panel'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
-import { DocPanelType } from '@/types'
+import { DocMainPanelType, DocPanelType } from '@/types'
 
 export function DocPanelButton({ label, ...props }: ComponentProps<'button'> & {
   label: string
@@ -30,10 +31,12 @@ export function DocPanel() {
   const { isWaitingResponse, currentAction, editorInstance } = useDocStore()
   const [collapsed, setCollapsed] = useState(false)
   const [activePanel, setActivePanel] = useState(DocPanelType.SPELLCHECK)
+  const [mainPanel, setMainPanel] = useState<DocMainPanelType>(DocMainPanelType.ASSIST)
   const [spellChecks, setSpellChecks] = useState<SpellCheckResult[]>([])
   const [readability, setReadability] = useState<ReadabilityResult[]>([])
 
   const handleAnalysis = async () => {
+    setMainPanel(DocMainPanelType.ANALYSIS)
     const text = editorInstance?.getText()
     if (!text)
       return
@@ -41,6 +44,14 @@ export function DocPanel() {
     console.log(m)
     setSpellChecks(m.spellcheck)
     setReadability(m.readability)
+
+    try {
+      // @ts-ignore
+      editorInstance?.commands.setSpellErrors(m.spellcheckWords || [])
+    }
+    catch (e) {
+      console.error('Error setting spell errors:', e)
+    }
   }
 
   useEffect(() => {
@@ -60,103 +71,65 @@ export function DocPanel() {
       title={collapsed ? 'Expand' : undefined}
       className={cn([
         'relative transition-all duration-200 ease-in-out',
-        'border rounded-md ml-4 flex flex-col',
-      ], collapsed ? 'w-[52px] cursor-pointer overflow-hidden' : 'w-4/12')}
+        'border rounded-md ml-4 flex flex-col h-full',
+      ], collapsed ? 'w-[52px] cursor-pointer overflow-hidden flex items-center justify-center hover:bg-muted' : 'w-4/12')}
     >
-      { collapsed && (
-        <div className="flex h-full items-center justify-center bg-card/50 transition duration-200 ease-in-out cursor-pointer hover:bg-card">
-          <Ellipsis className="size-5 text-muted-foreground" />
-        </div>
-      )}
-      <div
-        id="right-panel-content"
-        aria-hidden={collapsed}
-        className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full transition-opacity duration-200`}
-      >
-        <div className="px-3 py-2 flex">
-          <Button
-            onClick={() => setCollapsed(true)}
-            variant="ghost"
-            size="icon"
-            className="size-6"
-          >
-            <ArrowRightToLine />
-          </Button>
-          <Button onClick={handleAnalysis}>Analyze</Button>
-        </div>
-        <div className="border-t flex justify-between divide-x border-b">
-          <DocPanelButton label="Spell" onClick={() => setActivePanel(DocPanelType.SPELLCHECK)} />
-          <DocPanelButton label="Readability" onClick={() => setActivePanel(DocPanelType.READABILITY)} />
-        </div>
-        <div className="h-full overflow-y-scroll">
-          { activePanel === DocPanelType.SPELLCHECK && (
-            <SpellCheckPanel checks={spellChecks} />
-          )}
-          { activePanel === DocPanelType.READABILITY && (
-            <ReadabilityPanel messages={readability} />
-          )}
-          {/*          <AnalysisPanel />
-          <div>
-            { isWaitingResponse && <Loader className="h-80" /> }
-            { !isWaitingResponse && currentAction === 'lookup' && (
-              <LookupPanel />
-            )}
-            { !isWaitingResponse && currentAction === 'rewrite' && (
-              <RewritePanel />
-            )}
-          </div> */}
-        </div>
-      </div>
-    </aside>
-  )
-}
-
-function LookupPanel() {
-  const { lookupResults, editorInstance, selectionData } = useDocStore()
-  if (!lookupResults) {
-    return (<div></div>)
-  }
-  const { word, definition, synonyms } = lookupResults
-  function handleWordFlip(synonym: string) {
-    if (!editorInstance || !selectionData) {
-      console.error('Editor instance or selection data not available')
-      return
-    }
-    editorInstance
-      .chain()
-      .focus()
-      .setTextSelection({ from: selectionData.from, to: selectionData.to })
-      .insertContent(synonym)
-      .run()
-  }
-  return (
-    <div className="flex flex-col gap-3">
-      <div>
-        <p className="text-2xl font-semibold mb-1">{ word }</p>
-      </div>
-      <div className="space-y-1">
-        <Label>Definition</Label>
-        <p>{ definition }</p>
-      </div>
-      <div className="space-y-1">
-        <Label>Synonyms</Label>
-        <div className="flex flex-wrap gap-2">
-          { synonyms && synonyms.length > 0 && (
-            synonyms.map((synonym: string, index: number) => (
+      { collapsed && <Icon icon="ion:ellipsis-vertical" className="size-5" /> }
+      { !collapsed && (
+        <div
+          id="right-panel-content"
+          aria-hidden={collapsed}
+          className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full transition-opacity duration-200`}
+        >
+          <div className="flex h-8 border-b">
+            <div className="border-r w-12 flex items-center justify-center shrink-0">
+              <Button
+                onClick={() => setCollapsed(true)}
+                variant="ghost"
+                size="icon"
+                className="size-6"
+              >
+                <Icon icon="octicon:sidebar-collapse-24" />
+              </Button>
+            </div>
+            <div className="w-full flex items-center">
               <button
                 type="button"
-                className="text-left inline-flex border cursor-pointer px-3 py-1 rounded text-[15px] leading-[26px] transition duration-200 ease-in-out hover:bg-muted"
-                key={index}
-                onClick={() => handleWordFlip(synonym)}
+                onClick={handleAnalysis}
+                className="px-6 text-sm border-r h-full font-medium cursor-pointer"
               >
-                <p>
-                  {synonym}
-                </p>
+                Analysis
               </button>
-            ))
+              <button
+                type="button"
+                onClick={() => setMainPanel(DocMainPanelType.ASSIST)}
+                className="px-6 text-sm border-r h-full font-medium cursor-pointer"
+              >
+                Assist
+              </button>
+            </div>
+          </div>
+          { mainPanel === DocMainPanelType.ASSIST && (
+            <AssistPanel />
+          )}
+          { mainPanel === DocMainPanelType.ANALYSIS && (
+            <div>
+              <div className="border-t flex justify-between divide-x border-b">
+                <DocPanelButton label="Spell" onClick={() => setActivePanel(DocPanelType.SPELLCHECK)} />
+                <DocPanelButton label="Readability" onClick={() => setActivePanel(DocPanelType.READABILITY)} />
+              </div>
+              <div className="h-full overflow-y-scroll">
+                { activePanel === DocPanelType.SPELLCHECK && (
+                  <SpellCheckPanel checks={spellChecks} />
+                )}
+                { activePanel === DocPanelType.READABILITY && (
+                  <ReadabilityPanel messages={readability} />
+                )}
+              </div>
+            </div>
           )}
         </div>
-      </div>
-    </div>
+      )}
+    </aside>
   )
 }

@@ -59,6 +59,12 @@ importers:
       '@tiptap/core':
         specifier: ^3.1.0
         version: 3.1.0(@tiptap/pm@3.1.0)
+      '@tiptap/extension-highlight':
+        specifier: ^3.2.0
+        version: 3.2.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))
+      '@tiptap/extension-text-align':
+        specifier: ^3.2.0
+        version: 3.2.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))
       '@tiptap/extensions':
         specifier: ^3.1.0
         version: 3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0)
@@ -89,6 +95,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      prosemirror-model:
+        specifier: ^1.25.3
+        version: 1.25.3
       prosemirror-state:
         specifier: ^1.4.3
         version: 1.4.3
@@ -1518,6 +1527,11 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.1.0
 
+  '@tiptap/extension-highlight@3.2.0':
+    resolution: {integrity: sha512-1TrV+NBZH+mlcx7ynupXETXA31PqpHfBzZazinX7+wart8nr67N1QSVCZccFadYmHm7qSkpjwiTF6m0hiWiDOA==}
+    peerDependencies:
+      '@tiptap/core': ^3.2.0
+
   '@tiptap/extension-horizontal-rule@3.1.0':
     resolution: {integrity: sha512-EjYW72H3YAQ/yuvoMz5YtrChVesrgQ1UNB/6WynEg+frvVsfGUcNv6B9zkRT7b+XEnOVzXUW8rNlSlkrWFiSbQ==}
     peerDependencies:
@@ -1565,6 +1579,11 @@ packages:
     resolution: {integrity: sha512-7DzMXM5NrtTC3uVcjYgImNuXKMXonPZXwf0Q+No/sKqxtU+yXjusjVMmZqNLbzvtAFKghO0GDJGD4RxBNX9FgQ==}
     peerDependencies:
       '@tiptap/core': ^3.1.0
+
+  '@tiptap/extension-text-align@3.2.0':
+    resolution: {integrity: sha512-fnS4O92cyQWMUFdmiNkrKYzxbf8jBzxGFZMVir3Ihh1pKtTGfoz3d6gYMayb+kqMZDgt/JmWnZdb/mLjSzD42w==}
+    peerDependencies:
+      '@tiptap/core': ^3.2.0
 
   '@tiptap/extension-text@3.1.0':
     resolution: {integrity: sha512-BW1FEG4upSfhqBpBiPdEi8IMMJDmu0ThvZWYF385WVveQ5/jFK98RS2Kz7qt82jVvw2oyhOUL4Yy63T0Bh6W1w==}
@@ -5423,6 +5442,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
 
+  '@tiptap/extension-highlight@3.2.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))':
+    dependencies:
+      '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
+
   '@tiptap/extension-horizontal-rule@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0)':
     dependencies:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
@@ -5460,6 +5483,10 @@ snapshots:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
 
   '@tiptap/extension-strike@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))':
+    dependencies:
+      '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
+
+  '@tiptap/extension-text-align@3.2.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))':
     dependencies:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
 

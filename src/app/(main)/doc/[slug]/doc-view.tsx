@@ -1,5 +1,7 @@
 'use client'
 import type { Document } from '@/generated/prisma'
+import Highlight from '@tiptap/extension-highlight'
+import TextAlign from '@tiptap/extension-text-align'
 import { CharacterCount } from '@tiptap/extensions'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -53,6 +55,14 @@ export default function DocView({ doc }: {
     extensions: [
       StarterKit,
       CharacterCount,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Highlight.configure({
+        HTMLAttributes: {
+          class: 'bg-yellow-300',
+        },
+      }),
       SpellCheckExtension.configure({
         errors: ['Madhya'],
       }),
