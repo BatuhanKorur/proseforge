@@ -5,5 +5,6 @@ export default antfu({
   rules: {
     'no-console': 'off',
     'ts/ban-ts-comment': 'off',
+    'react/no-array-index-key': 'off',
   },
 })

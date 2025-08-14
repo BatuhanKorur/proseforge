@@ -310,3 +310,15 @@
 .doc-edit ::selection {
   @apply bg-primary/20;
 }
+
+.spell-error {
+  color: red !important;
+  text-decoration: underline;
+  text-decoration-color: red;
+  cursor: pointer;
+  position: relative;
+}
+
+.spell-error:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}

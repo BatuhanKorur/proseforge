@@ -10,3 +10,12 @@ export interface LookupResponse {
   definition: string
   synonyms: string[]
 }
+
+export interface AnalysisResponse {
+  spellcheck: { word: string, expected: string }[]
+}
+
+export enum DocPanelType {
+  SPELLCHECK,
+  READABILITY,
+}

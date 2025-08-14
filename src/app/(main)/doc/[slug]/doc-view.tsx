@@ -9,6 +9,7 @@ import DocBubble from '@/app/(main)/doc/[slug]/doc-bubble'
 import DocFooter from '@/app/(main)/doc/[slug]/doc-footer'
 import DocToolbar from '@/app/(main)/doc/[slug]/doc-toolbar'
 import { useShortcut } from '@/hooks/use-keyboard'
+import { SpellCheckExtension } from '@/lib/tiptap-spellcheck'
 import { extractPreviewText } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
@@ -52,6 +53,9 @@ export default function DocView({ doc }: {
     extensions: [
       StarterKit,
       CharacterCount,
+      SpellCheckExtension.configure({
+        errors: ['Madhya'],
+      }),
     ],
     content: initialContent,
     immediatelyRender: false,

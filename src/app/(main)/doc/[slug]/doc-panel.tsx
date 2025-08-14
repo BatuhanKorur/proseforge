@@ -1,15 +1,47 @@
 'use client'
+import type { ComponentProps } from 'react'
+import type { ReadabilityResult, SpellCheckResult } from '@/actions/review.actions'
 import { ArrowRightToLine, Ellipsis } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { analyze } from '@/actions/review.actions'
+import ReadabilityPanel from '@/app/(main)/doc/[slug]/panels/readability-panel'
+import SpellCheckPanel from '@/app/(main)/doc/[slug]/panels/spell-check-panel'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import Loader from '@/components/ui/loader'
 import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
+import { DocPanelType } from '@/types'
+
+export function DocPanelButton({ label, ...props }: ComponentProps<'button'> & {
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      className="w-full h-14 text-sm cursor-pointer"
+      {...props}
+    >
+      { label }
+    </button>
+  )
+}
 
 export function DocPanel() {
-  const { isWaitingResponse, currentAction } = useDocStore()
+  const { isWaitingResponse, currentAction, editorInstance } = useDocStore()
   const [collapsed, setCollapsed] = useState(false)
+  const [activePanel, setActivePanel] = useState(DocPanelType.SPELLCHECK)
+  const [spellChecks, setSpellChecks] = useState<SpellCheckResult[]>([])
+  const [readability, setReadability] = useState<ReadabilityResult[]>([])
+
+  const handleAnalysis = async () => {
+    const text = editorInstance?.getText()
+    if (!text)
+      return
+    const m = await analyze(text)
+    console.log(m)
+    setSpellChecks(m.spellcheck)
+    setReadability(m.readability)
+  }
 
   useEffect(() => {
     if (isWaitingResponse) {
@@ -17,6 +49,7 @@ export function DocPanel() {
       console.log('current action:', currentAction)
     }
   }, [isWaitingResponse, currentAction])
+
   return (
     <aside
       id="right-panel"
@@ -26,9 +59,9 @@ export function DocPanel() {
       tabIndex={collapsed ? 0 : -1}
       title={collapsed ? 'Expand' : undefined}
       className={cn([
-        'relative overflow-hidden transition-all duration-200 ease-in-out',
-        'border my-4 rounded-md ml-4',
-      ], collapsed ? 'w-[52px] cursor-pointer' : 'w-4/12')}
+        'relative transition-all duration-200 ease-in-out',
+        'border rounded-md ml-4 flex flex-col',
+      ], collapsed ? 'w-[52px] cursor-pointer overflow-hidden' : 'w-4/12')}
     >
       { collapsed && (
         <div className="flex h-full items-center justify-center bg-card/50 transition duration-200 ease-in-out cursor-pointer hover:bg-card">
@@ -40,23 +73,38 @@ export function DocPanel() {
         aria-hidden={collapsed}
         className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full transition-opacity duration-200`}
       >
-        <div className="px-3 py-3">
+        <div className="px-3 py-2 flex">
           <Button
             onClick={() => setCollapsed(true)}
             variant="ghost"
             size="icon"
+            className="size-6"
           >
             <ArrowRightToLine />
           </Button>
+          <Button onClick={handleAnalysis}>Analyze</Button>
         </div>
-        <div className="px-4.5">
-          { isWaitingResponse && <Loader className="h-80" /> }
-          { !isWaitingResponse && currentAction === 'lookup' && (
-            <LookupPanel />
+        <div className="border-t flex justify-between divide-x border-b">
+          <DocPanelButton label="Spell" onClick={() => setActivePanel(DocPanelType.SPELLCHECK)} />
+          <DocPanelButton label="Readability" onClick={() => setActivePanel(DocPanelType.READABILITY)} />
+        </div>
+        <div className="h-full overflow-y-scroll">
+          { activePanel === DocPanelType.SPELLCHECK && (
+            <SpellCheckPanel checks={spellChecks} />
           )}
-          { !isWaitingResponse && currentAction === 'rewrite' && (
-            <RewritePanel />
+          { activePanel === DocPanelType.READABILITY && (
+            <ReadabilityPanel messages={readability} />
           )}
+          {/*          <AnalysisPanel />
+          <div>
+            { isWaitingResponse && <Loader className="h-80" /> }
+            { !isWaitingResponse && currentAction === 'lookup' && (
+              <LookupPanel />
+            )}
+            { !isWaitingResponse && currentAction === 'rewrite' && (
+              <RewritePanel />
+            )}
+          </div> */}
         </div>
       </div>
     </aside>
@@ -109,23 +157,6 @@ function LookupPanel() {
           )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function RewritePanel() {
-  const { rewriteResults, editorInstance, selectionData } = useDocStore()
-  if (!rewriteResults) {
-    return (<div></div>)
-  }
-  return (
-    <div>
-      {rewriteResults.map((result: string, index: number) => (
-        <div key={index}>
-          <p>{result}</p>
-        </div>
-      ))}
-      <p>Rewrite Panel</p>
     </div>
   )
 }
