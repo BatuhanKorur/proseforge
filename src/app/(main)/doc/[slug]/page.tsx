@@ -1,6 +1,6 @@
 import { getDocumentById } from '@/actions/doc.actions'
-import { DocPanel } from '@/app/(main)/doc/[slug]/doc-panel'
-import DocView from '@/app/(main)/doc/[slug]/doc-view'
+import DocEditor from '@/app/(main)/doc/[slug]/doc-editor'
+import { DocInspector } from '@/app/(main)/doc/[slug]/doc-inspector'
 
 export default async function DocPage({ params }: { params: { slug: string } }) {
   const { slug } = await params
@@ -13,8 +13,8 @@ export default async function DocPage({ params }: { params: { slug: string } }) 
 
   return (
     <div className="flex h-[90dvh] overflow-hidden">
-      <DocView doc={doc} />
-      <DocPanel />
+      <DocEditor doc={doc} />
+      <DocInspector />
     </div>
   )
 }

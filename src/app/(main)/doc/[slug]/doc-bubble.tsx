@@ -1,5 +1,7 @@
 import type { ComponentProps } from 'react'
 import { BubbleMenu } from '@tiptap/react/menus'
+
+import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
 export default function DocBubble() {
@@ -31,7 +33,7 @@ export default function DocBubble() {
         offset: 8,
       }}
     >
-      <div className="bg-popover text-popover-foreground z-50 w-52 rounded border p-1.5 shadow-lg outline-hidden">
+      <div className="bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-hidden">
         <BubbleButton onClick={selectionData.isText ? handleTextRewrite : handleWordLookup}>
           <p>{ selectionData.isText ? 'Rewrite with AI' : 'Lookup Word'}</p>
         </BubbleButton>
@@ -43,7 +45,11 @@ function BubbleButton({ children, ...props }: ComponentProps<'button'>) {
   return (
     <button
       type="button"
-      className="w-full relative flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1 text-sm outline-hidden select-none transition duration-200 ease-in-out hover:bg-muted"
+      className={cn([
+        'relative w-full flex items-center gap-2 z-50',
+        'px-2 py-1.5 text-sm hover:bg-muted',
+        'cursor-pointer outline-hidden select-none transition duration-200 ease-in-out',
+      ])}
       {...props}
     >
       { children }

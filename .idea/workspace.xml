@@ -5,17 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9689bb51-0c63-43df-bafb-45bd03e081b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/assist-panel.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/pf-logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/doc-browser.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/logo.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-panel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-toolbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-toolbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/dropdown-menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/dropdown-menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/tooltip.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/tooltip.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/tiptap-spellcheck.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/tiptap-spellcheck.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seed/doc.seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/seed/doc.seed.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seed/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/seed/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-bubble.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-bubble.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-view.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-editor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/page-heading.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/editor.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/prisma.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prisma.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -26,8 +31,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript JSX File" />
         <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
@@ -44,29 +49,30 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Node.js.index.ts.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.word.actions.ts.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
-    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/batu/Projects/proseforge/.archive&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/batu/Projects/proseforge/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.index.ts.executor": "Run",
+    "Node.js.word.actions.ts.executor": "Run",
+    "Node.js.x.ts.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "last_opened_file_path": "/Users/batu/Projects/proseforge/public",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "ts.external.directory.path": "/Users/batu/Projects/proseforge/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -78,16 +84,17 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/.archive" />
       <recent name="$PROJECT_DIR$/public" />
+      <recent name="$PROJECT_DIR$/.archive" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/app/(main)" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components" />
       <recent name="$PROJECT_DIR$/.archive" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.word.actions.ts">
+  <component name="RunManager" selected="Node.js.x.ts">
     <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
     </configuration>
@@ -95,6 +102,9 @@
       <method v="2" />
     </configuration>
     <configuration name="word.actions.ts" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/actions/ai/word.actions.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/src/actions/ai">
+      <method v="2" />
+    </configuration>
+    <configuration name="x.ts" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/prisma/x.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/prisma">
       <method v="2" />
     </configuration>
     <configuration name="Next.js: server-side" type="js.build_tools.npm">
@@ -109,6 +119,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.x.ts" />
         <item itemvalue="Node.js.word.actions.ts" />
         <item itemvalue="Node.js.index.ts" />
       </list>

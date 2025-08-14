@@ -11,16 +11,12 @@ export interface LookupResponse {
   synonyms: string[]
 }
 
-export interface AnalysisResponse {
-  spellcheck: { word: string, expected: string }[]
+export enum DocInspectorType {
+  ASSIST,
+  ANALYSIS,
 }
 
 export enum DocPanelType {
   SPELLCHECK,
   READABILITY,
-}
-
-export enum DocMainPanelType {
-  ASSIST,
-  ANALYSIS,
 }

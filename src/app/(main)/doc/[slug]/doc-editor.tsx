@@ -15,7 +15,7 @@ import { SpellCheckExtension } from '@/lib/tiptap-spellcheck'
 import { extractPreviewText } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
-export default function DocView({ doc }: {
+export default function DocEditor({ doc }: {
   doc: Document
 }) {
   const {
@@ -117,8 +117,8 @@ export default function DocView({ doc }: {
   return (
     <div className="flex-1 min-w-0 flex flex-col">
       <DocToolbar />
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-        <div className="mx-auto w-full max-w-3xl py-12">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-8">
+        <div className="mx-auto w-full max-w-3xl">
           { editor && <DocBubble />}
           <EditorContent editor={editor} />
         </div>

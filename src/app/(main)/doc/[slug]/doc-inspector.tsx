@@ -11,37 +11,25 @@ import SpellCheckPanel from '@/app/(main)/doc/[slug]/panels/spell-check-panel'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
-import { DocMainPanelType, DocPanelType } from '@/types'
+import { DocInspectorType, DocPanelType } from '@/types'
 
-export function DocPanelButton({ label, ...props }: ComponentProps<'button'> & {
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      className="w-full h-14 text-sm cursor-pointer"
-      {...props}
-    >
-      { label }
-    </button>
-  )
-}
-
-export function DocPanel() {
+export function DocInspector() {
   const { isWaitingResponse, currentAction, editorInstance } = useDocStore()
   const [collapsed, setCollapsed] = useState(false)
+  const [inspectorPanel, setInspectorPanel] = useState<DocInspectorType>(DocInspectorType.ANALYSIS)
   const [activePanel, setActivePanel] = useState(DocPanelType.SPELLCHECK)
-  const [mainPanel, setMainPanel] = useState<DocMainPanelType>(DocMainPanelType.ASSIST)
+
   const [spellChecks, setSpellChecks] = useState<SpellCheckResult[]>([])
   const [readability, setReadability] = useState<ReadabilityResult[]>([])
 
   const handleAnalysis = async () => {
-    setMainPanel(DocMainPanelType.ANALYSIS)
+    setInspectorPanel(DocInspectorType.ANALYSIS)
     const text = editorInstance?.getText()
-    if (!text)
+    if (!text) {
       return
+    }
+
     const m = await analyze(text)
-    console.log(m)
     setSpellChecks(m.spellcheck)
     setReadability(m.readability)
 
@@ -53,6 +41,14 @@ export function DocPanel() {
       console.error('Error setting spell errors:', e)
     }
   }
+
+  const handleAssist = async () => {
+    setInspectorPanel(DocInspectorType.ASSIST)
+  }
+
+  useEffect(() => {
+    handleAnalysis()
+  }, [editorInstance])
 
   useEffect(() => {
     if (isWaitingResponse) {
@@ -102,17 +98,17 @@ export function DocPanel() {
               </button>
               <button
                 type="button"
-                onClick={() => setMainPanel(DocMainPanelType.ASSIST)}
+                onClick={handleAssist}
                 className="px-6 text-sm border-r h-full font-medium cursor-pointer"
               >
                 Assist
               </button>
             </div>
           </div>
-          { mainPanel === DocMainPanelType.ASSIST && (
+          { inspectorPanel === DocInspectorType.ASSIST && (
             <AssistPanel />
           )}
-          { mainPanel === DocMainPanelType.ANALYSIS && (
+          { inspectorPanel === DocInspectorType.ANALYSIS && (
             <div>
               <div className="border-t flex justify-between divide-x border-b">
                 <DocPanelButton label="Spell" onClick={() => setActivePanel(DocPanelType.SPELLCHECK)} />
@@ -131,5 +127,19 @@ export function DocPanel() {
         </div>
       )}
     </aside>
+  )
+}
+
+export function DocPanelButton({ label, ...props }: ComponentProps<'button'> & {
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      className="w-full h-14 text-sm cursor-pointer"
+      {...props}
+    >
+      { label }
+    </button>
   )
 }
