@@ -3,25 +3,12 @@ import type { Document } from '@/generated/prisma'
 import { CharacterCount } from '@tiptap/extensions'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { ArrowRightToLine } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { persistDocument } from '@/actions/doc.actions'
 import DocBubble from '@/app/(main)/doc/[slug]/doc-bubble'
-import { Button } from '@/components/ui/button'
 import { useShortcut } from '@/hooks/use-keyboard'
+import { extractPreviewText, parseDocumentContent } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
-
-function parseDocumentContent(content: string | null) {
-  if (!content) {
-    return { type: 'doc', content: [{ type: 'paragraph' }] }
-  }
-  try {
-    return JSON.parse(content)
-  }
-  catch (e) {
-    return { type: 'doc', content: [{ type: 'paragraph' }] }
-  }
-}
 
 export default function DocView({ doc }: {
   doc: Document
@@ -60,8 +47,12 @@ export default function DocView({ doc }: {
         return
       }
       const selected = editorInstance.state.doc.textBetween(selection.from, selection.to)
+      setSelectedFrom(selection.from)
+      setSelectedTo(selection.to)
       setSelected(selected)
       setIsText(selected.includes(' ') && selected.trim().length > 10)
+
+      console.log(selectedFrom, selectedTo)
     }, 300) // 0.3 second delay
   }, [])
 
@@ -92,7 +83,8 @@ export default function DocView({ doc }: {
       return
     }
     try {
-      await persistDocument(doc.id, JSON.stringify(json))
+      const previewText = extractPreviewText(editor)
+      await persistDocument(doc.id, JSON.stringify(json), previewText)
       pingSavedPulse()
     }
     catch (e) {
@@ -109,62 +101,32 @@ export default function DocView({ doc }: {
 
   useShortcut('ctrl+s', saveCurrentDoc)
   return (
-    <>
-      <div className="flex h-[90dvh] overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-            <div className="mx-auto w-full max-w-3xl py-12">
-              { editor && (
-                <DocBubble
-                  editor={editor}
-                  isText={isText}
-                />
-              )}
-              <EditorContent editor={editor} />
-            </div>
-          </div>
-
-          <footer className="mx-auto w-full max-w-3xl shrink-0 border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3 pt-3 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between gap-3">
-              <span>
-                Characters:
-                { characterCount }
-              </span>
-              <span>
-                Words:
-                { wordCount }
-              </span>
-            </div>
-          </footer>
+    <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+        <div className="mx-auto w-full max-w-3xl py-12">
+          { editor && (
+            <DocBubble
+              editor={editor}
+              isText={isText}
+              selected={selected}
+            />
+          )}
+          <EditorContent editor={editor} />
         </div>
-
-        <aside
-          id="right-panel"
-          aria-expanded={!collapsed}
-          onClick={collapsed ? () => setCollapsed(false) : undefined}
-          role={collapsed ? 'button' : undefined}
-          tabIndex={collapsed ? 0 : -1}
-          title={collapsed ? 'Expand' : undefined}
-          className={`${collapsed ? 'w-[60px] cursor-pointer bg-muted/50 rounded-xl transition duration-200 ease-in-out hover:bg-muted/100' : 'w-4/12'} relative overflow-hidden transition-[width] duration-300 ease-in-out`}
-        >
-          <div
-            id="right-panel-content"
-            aria-hidden={collapsed}
-            className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full p-4 transition-opacity duration-200`}
-          >
-            <Button
-              onClick={() => setCollapsed(true)}
-              variant="ghost"
-              size="icon"
-            >
-              <ArrowRightToLine />
-            </Button>
-            <div>
-              <p>yolo</p>
-            </div>
-          </div>
-        </aside>
       </div>
-    </>
+
+      <footer className="mx-auto w-full max-w-3xl shrink-0 border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3 pt-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3">
+          <span>
+            Characters:
+            { characterCount }
+          </span>
+          <span>
+            Words:
+            { wordCount }
+          </span>
+        </div>
+      </footer>
+    </div>
   )
 }

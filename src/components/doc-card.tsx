@@ -18,22 +18,23 @@ import {
 import { Button } from '@/components/ui/button'
 
 export default function DocCard({ doc }: { doc: Document }) {
+  const { preview, id, title, updatedAt } = doc
   return (
-    <div className="border rounded-md bg-card">
-      <Link href={`/doc/${doc.id}`}>
-        <div className="px-4 pt-4">
-          <p className="text-lg font-semibold">{ doc.title }</p>
+    <div className="border rounded bg-card drop-shadow-md flex flex-col">
+      <Link href={`/doc/${id}`} className="flex-1">
+        <div className="px-4 py-4">
+          <p className="text-md font-semibold">{ title }</p>
         </div>
-        <div className="py-4 px-4">
-          <p>Content</p>
+        <div className="px-4 text-muted-foreground">
+          { preview && <p className="text-sm line-clamp-3 leading-5.5">{preview}</p>}
         </div>
       </Link>
-      <div className="border-t px-4 py-2 flex items-center justify-between">
+      <div className="border-t pl-4 pr-2 py-1.5 mt-4 flex items-center justify-between">
         <div>
-          <DateTime className="text-sm text-muted-foreground" date={doc.updatedAt} />
+          <DateTime className="text-xs text-muted-foreground" date={updatedAt} />
         </div>
         <div>
-          <DeleteButton id={doc.id} title={doc.title} />
+          <DeleteButton id={id} title={title} />
         </div>
       </div>
     </div>
@@ -42,7 +43,6 @@ export default function DocCard({ doc }: { doc: Document }) {
 
 function DeleteButton({ id, title }: { id: string, title: string }) {
   const handleDeleteDocument = async () => {
-    console.log('Deleting document:', id)
     try {
       await deleteDocument(id)
     }
@@ -54,7 +54,7 @@ function DeleteButton({ id, title }: { id: string, title: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="ghost" size="icon">
           <Trash2 />
         </Button>
       </AlertDialogTrigger>

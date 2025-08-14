@@ -20,11 +20,14 @@ export async function getDocumentById(id: string) {
   }
 }
 
-export async function persistDocument(docId: string, content: string) {
+export async function persistDocument(docId: string, content: string, preview: string) {
   try {
     await prisma.document.update({
       where: { id: docId },
-      data: { content },
+      data: {
+        content,
+        preview,
+      },
     })
   }
   catch (error) {

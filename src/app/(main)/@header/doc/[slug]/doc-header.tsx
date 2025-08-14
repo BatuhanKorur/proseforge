@@ -1,6 +1,7 @@
 'use client'
 import { Bookmark } from 'lucide-react'
 import { useState } from 'react'
+import { updateDocumentTitle } from '@/actions/doc.actions'
 import { Button } from '@/components/ui/button'
 import { useDocStore } from '@/stores/doc.store'
 import { useUserStore } from '@/stores/user.store'
@@ -17,7 +18,7 @@ export default function DocHeader({ title, docId }: {
     setSaveSignal(true)
   }
   const handleTitleSave = async () => {
-    console.log('Handle Title Save')
+    await updateDocumentTitle(docId, docTitle)
   }
   const handleFavorite = async () => {
     setFavorite(docId, docTitle)
@@ -28,7 +29,7 @@ export default function DocHeader({ title, docId }: {
         <input
           value={docTitle}
           onChange={e => setDocTitle(e.target.value)}
-          className="focus:outline-none text-[17px] font-medium"
+          className="focus:outline-none text-[17px] font-medium h-7"
           onBlur={handleTitleSave}
         />
       </div>

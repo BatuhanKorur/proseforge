@@ -18,6 +18,7 @@ model Document {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   content   Json?
+  preview   String?
   createdAt DateTime @default(now()) @map("_createdAt") @db.Date
   updatedAt DateTime @default(now()) @map("_updatedAt") @db.Date
 

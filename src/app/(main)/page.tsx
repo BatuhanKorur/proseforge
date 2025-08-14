@@ -16,7 +16,7 @@ export default async function MainPage() {
   return (
     <div>
       <PageHeading />
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-4">
         {docs.map(doc => (
           <DocCard doc={doc} key={doc.id} />
         ))}

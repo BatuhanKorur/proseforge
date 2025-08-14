@@ -124,10 +124,7 @@
 .tiptap {
   @apply focus:outline-none;
 }
-.has-focus {
-  @apply bg-foreground/7;
-}
-/* Base typography area */
+
 .doc-edit .tiptap,
 .doc-edit .ProseMirror {
   @apply text-[18px] leading-7 text-primary;

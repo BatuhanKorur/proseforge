@@ -1,4 +1,5 @@
-export async function getWordData(word: string) {
+'use server'
+export async function lookupWord(word: string) {
   try {
     if (!word) {
       throw new Error('Word cannot be empty')

@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core'
 import type { ComponentProps } from 'react'
 import { BubbleMenu } from '@tiptap/react/menus'
+import { useDocStore } from '@/stores/doc.store'
 
 function BubbleButton({ children, ...props }: ComponentProps<'button'>) {
   return (
@@ -13,19 +14,24 @@ function BubbleButton({ children, ...props }: ComponentProps<'button'>) {
     </button>
   )
 }
-export default function DocBubble({ editor, isText }: { editor: Editor, isText: boolean }) {
+export default function DocBubble({
+  editor,
+  isText,
+  selected,
+}: { editor: Editor, isText: boolean, selected: string }) {
+  const docStore = useDocStore()
   const closeBubble = () => {
     const pos = editor.state.selection.to
     editor.chain().focus().setTextSelection(pos).run()
   }
 
   const handleTextRewrite = () => {
-    console.log('Hello World!')
+    docStore.triggerRewrite(selected)
     closeBubble()
   }
 
   const handleWordLookup = () => {
-    console.log('Word Lookup')
+    docStore.triggerLookup(selected)
     closeBubble()
   }
 
@@ -38,7 +44,7 @@ export default function DocBubble({ editor, isText }: { editor: Editor, isText: 
         offset: 8,
       }}
     >
-      <div className="bg-popover text-popover-foreground z-50 w-72 rounded-md border p-2 shadow-md outline-hidden">
+      <div className="bg-popover text-popover-foreground z-50 w-52 rounded border p-1.5 shadow-lg outline-hidden">
         <BubbleButton onClick={isText ? handleTextRewrite : handleWordLookup}>
           <p>{ isText ? 'Rewrite with AI' : 'Lookup Word'}</p>
         </BubbleButton>

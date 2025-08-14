@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { rewriteWithAi } from '@/actions/ai/rewrite.actions'
+import { lookupWord } from '@/actions/ai/word.actions'
 
 interface DocStoreState {
   saveSignal: boolean
@@ -6,25 +8,75 @@ interface DocStoreState {
 
   showSavedPulse: boolean
   pingSavedPulse: () => void
+
+  isRewriting: boolean
+  rewriteResults: string[]
+  triggerRewrite: (text: string) => void
+
+  isLookingUp: boolean
+  lookupResults: any
+  triggerLookup: (word: string) => void
 }
 
-export const useDocStore = create<DocStoreState>(() => {
+export const useDocStore = create<DocStoreState>((set) => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 
   return {
+    // Save Signal
     saveSignal: false,
-    setSaveSignal: (val) => {
-      useDocStore.setState({ saveSignal: val })
+    setSaveSignal: (value) => {
+      set({ saveSignal: value })
     },
+
+    // Save Pulse
     showSavedPulse: false,
     pingSavedPulse: () => {
-      if (timeoutId)
+      if (timeoutId) {
         clearTimeout(timeoutId)
-
-      useDocStore.setState({ showSavedPulse: true })
+      }
+      set({ showSavedPulse: true })
       timeoutId = setTimeout(() => {
-        useDocStore.setState({ showSavedPulse: false })
+        set({ showSavedPulse: false })
       }, 2500)
+    },
+
+    // Rewrite with AI
+    isRewriting: false,
+    rewriteResults: [],
+    triggerRewrite: async (text) => {
+      set({ isRewriting: true })
+      try {
+        const results = await rewriteWithAi(text)
+        set({ rewriteResults: results })
+      }
+      catch (e) {
+        console.error('Error rewriting:', e)
+        return false
+      }
+      finally {
+        set({ isRewriting: false })
+      }
+    },
+
+    isLookingUp: false,
+    lookupResults: {},
+    triggerLookup: async (word) => {
+      set({ isLookingUp: true })
+      try {
+        // Call your API here
+        const results = await lookupWord(word)
+        set({ lookupResults: results })
+        console.log(results)
+        // Display results in the UI
+        // ...
+      }
+      catch (e) {
+        console.error('Error looking up:', e)
+        return false
+      }
+      finally {
+        set({ isLookingUp: false })
+      }
     },
   }
 })
