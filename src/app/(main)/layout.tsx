@@ -13,7 +13,7 @@ export default function MainLayout({ children, header }: { children: ReactNode, 
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-15 shrink-0 items-center gap-2">
+        <header className="flex h-12 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4 w-full">
             <SidebarTrigger className="-ml-1" />
             <Separator

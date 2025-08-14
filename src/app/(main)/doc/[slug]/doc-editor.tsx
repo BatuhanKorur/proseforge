@@ -8,7 +8,6 @@ import StarterKit from '@tiptap/starter-kit'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { persistDocument } from '@/actions/doc.actions'
 import DocBubble from '@/app/(main)/doc/[slug]/doc-bubble'
-import DocFooter from '@/app/(main)/doc/[slug]/doc-footer'
 import DocToolbar from '@/app/(main)/doc/[slug]/doc-toolbar'
 import { useShortcut } from '@/hooks/use-keyboard'
 import { SpellCheckExtension } from '@/lib/tiptap-spellcheck'
@@ -135,7 +134,6 @@ export default function DocEditor({ doc }: {
           <EditorContent editor={editor} />
         </div>
       </div>
-      <DocFooter />
     </div>
   )
 }

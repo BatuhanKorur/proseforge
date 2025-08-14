@@ -1,0 +1,187 @@
+
+
+.doc-edit .tiptap,
+.doc-edit .ProseMirror {
+    @apply text-[18px] leading-7 text-primary;
+}
+
+/* Vertical rhythm: add space between sibling blocks */
+.doc-edit .tiptap > * + *,
+.doc-edit .ProseMirror > * + * {
+    @apply mt-4;
+}
+
+/* Headings */
+.doc-edit h1 {
+    @apply text-[32px] leading-tight font-semibold tracking-tight mt-8 mb-3;
+}
+.doc-edit h2 {
+    @apply text-[28px] leading-tight font-semibold tracking-tight mt-8 mb-3;
+}
+.doc-edit h3 {
+    @apply text-[24px] leading-snug font-semibold mt-6 mb-2;
+}
+.doc-edit h4 {
+    @apply text-[20px] leading-snug font-semibold mt-6 mb-2;
+}
+.doc-edit h5 {
+    @apply text-[18px] leading-snug font-semibold mt-4 mb-2;
+}
+.doc-edit h6 {
+    @apply text-[16px] leading-snug font-semibold uppercase tracking-wide mt-4 mb-2 text-muted-foreground;
+}
+
+/* Paragraphs and links */
+.doc-edit p {
+    @apply text-[18px] font-normal text-primary;
+}
+.doc-edit a {
+    @apply underline underline-offset-4 decoration-1 text-primary-foreground/90;
+}
+.doc-edit a:hover {
+    @apply text-primary-foreground;
+}
+.doc-edit p a {
+    @apply text-indigo-200; /* preserves your existing anchor color inside paragraphs */
+}
+
+/* Emphasis and inline formatting */
+.doc-edit strong,
+.doc-edit b {
+    @apply font-semibold text-foreground;
+}
+.doc-edit em,
+.doc-edit i {
+    @apply italic;
+}
+.doc-edit u {
+    @apply underline;
+}
+.doc-edit s,
+.doc-edit del {
+    @apply line-through text-muted-foreground;
+}
+.doc-edit mark {
+    @apply bg-yellow-200/60 dark:bg-yellow-300/25 text-foreground rounded px-1 py-0.5;
+}
+
+/* Inline code */
+.doc-edit :not(pre) > code {
+    @apply bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 text-[0.9em] font-mono;
+}
+
+/* Code blocks */
+.doc-edit pre {
+    @apply bg-muted text-foreground rounded-md p-4 overflow-x-auto font-mono text-[14px] leading-6 border border-border;
+}
+.doc-edit pre code {
+    @apply bg-transparent p-0 text-inherit;
+}
+
+/* Optional: show language label if your code blocks set data-language */
+.doc-edit pre[data-language] {
+    @apply relative;
+}
+.doc-edit pre[data-language]::before {
+    content: attr(data-language);
+    @apply absolute top-2 right-2 text-[11px] uppercase tracking-wide text-muted-foreground bg-background/60 px-2 py-0.5 rounded border border-border;
+}
+
+/* Blockquotes */
+.doc-edit blockquote {
+    @apply border-l-4 border-accent pl-4 py-1 text-muted-foreground italic bg-accent/30 rounded-r;
+}
+.doc-edit blockquote > :last-child {
+    @apply mb-0;
+}
+
+/* Lists */
+.doc-edit ul {
+    @apply list-disc pl-6 my-4;
+}
+.doc-edit ol {
+    @apply list-decimal pl-6 my-4;
+}
+.doc-edit li {
+    @apply my-1;
+}
+.doc-edit li > ul,
+.doc-edit li > ol {
+    @apply mt-1;
+}
+/* Task lists (GitHub-style) */
+.doc-edit .task-list-item {
+    @apply list-none pl-0;
+}
+.doc-edit .task-list-item input[type="checkbox"] {
+    @apply align-middle mr-2 h-4 w-4 rounded border-border text-primary ring-0 focus:ring-2 focus:ring-ring;
+}
+
+/* Horizontal rule */
+.doc-edit hr {
+    @apply my-8 border-0 border-t border-border;
+}
+
+/* Tables */
+.doc-edit table {
+    @apply w-full text-left border-collapse overflow-hidden rounded-md my-6;
+    display: block;           /* enable horizontal scroll on small screens */
+    overflow-x: auto;
+}
+.doc-edit thead {
+    @apply bg-muted/60;
+}
+.doc-edit th,
+.doc-edit td {
+    @apply border border-border px-3 py-2 align-top;
+}
+.doc-edit th {
+    @apply font-semibold text-foreground text-sm uppercase tracking-wide;
+}
+.doc-edit tbody tr:nth-child(even) {
+    @apply bg-muted/40;
+}
+
+/* Images and figures */
+.doc-edit img {
+    @apply max-w-full h-auto rounded-md shadow-sm;
+}
+.doc-edit figure {
+    @apply my-6;
+}
+.doc-edit figcaption {
+    @apply text-center text-sm text-muted-foreground mt-2;
+}
+
+/* Superscript/Subscript */
+.doc-edit sup {
+    @apply align-super text-[0.75em];
+}
+.doc-edit sub {
+    @apply align-sub text-[0.75em];
+}
+
+/* KBD keys */
+.doc-edit kbd {
+    @apply inline-block px-1.5 py-0.5 rounded border border-border bg-secondary text-secondary-foreground text-[12px] font-mono;
+}
+
+/* Tiptap/ProseMirror specifics */
+.doc-edit .ProseMirror:focus,
+.doc-edit .tiptap:focus {
+    @apply outline-none ring-2 ring-ring/50 rounded-md;
+}
+/* Placeholder for empty editor (when using Tiptap placeholder extension) */
+.doc-edit .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply text-muted-foreground/70 float-left pointer-events-none h-0;
+}
+/* Gap cursor visibility */
+.doc-edit .ProseMirror-gapcursor {
+    @apply border-l border-ring/70;
+}
+
+/* Selection color (cross-browser) */
+.doc-edit ::selection {
+    @apply bg-primary/20;
+}

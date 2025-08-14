@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
 export default function DocToolbar() {
-  const { editorInstance } = useDocStore()
+  const { editorInstance, characterCount, wordCount } = useDocStore()
   if (!editorInstance) {
     return <></>
   }
@@ -93,6 +93,20 @@ export default function DocToolbar() {
         label="Horizontal Rule"
         onClick={() => editorInstance?.chain().focus().setHorizontalRule().run()}
       />
+      <div className="flex-1 flex justify-end">
+        <Tooltip>
+          <TooltipTrigger asChild className="flex items-center">
+            <p className="leading-0 text-sm space-x-1.5 text-muted-foreground">
+              <span>{ characterCount }</span>
+              <span>/</span>
+              <span>{ wordCount }</span>
+            </p>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" sideOffset={2}>
+            <p>Character Count / Word Count</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   )
 }
