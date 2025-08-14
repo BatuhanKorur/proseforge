@@ -2,7 +2,6 @@
 
 import dictionaryEn from 'dictionary-en'
 import { retext } from 'retext'
-import retextEnglish from 'retext-english'
 import retextReadability from 'retext-readability'
 import retextSpell from 'retext-spell'
 
@@ -37,7 +36,6 @@ function groupBySource(messages: any[]) {
 
 export async function analyze(text: string): Promise<AnalysisResult> {
   const check = await retext()
-    .use(retextEnglish)
     .use(retextReadability)
     .use(retextSpell, { dictionary: dictionaryEn })
     .process(text)
@@ -46,7 +44,6 @@ export async function analyze(text: string): Promise<AnalysisResult> {
   const { spellcheckItems, spellcheckWords } = extractSpellcheckResults(grouped['retext-spell'])
   const readabilityItems = extractReadabilityResults(grouped['retext-readability'])
 
-  console.log(grouped)
   return {
     spellcheck: spellcheckItems,
     spellcheckWords,
@@ -73,6 +70,9 @@ function extractSpellcheckResults(messages: any[] = []): { spellcheckItems: Spel
   const spellcheckWords = new Set<string>()
 
   for (const msg of messages) {
+    if (!msg.expected || msg.expected.length === 0) {
+      continue
+    }
     // 'actual' contains the misspelled word from the text.
     const misspelledWord = msg.actual
     if (misspelledWord) {

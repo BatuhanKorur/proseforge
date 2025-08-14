@@ -73,6 +73,7 @@ export default function DocEditor({ doc }: {
     editorProps: {
       attributes: {
         class: 'doc-edit',
+        spellCheck: 'false',
       },
     },
     onUpdate: ({ editor }) => {
