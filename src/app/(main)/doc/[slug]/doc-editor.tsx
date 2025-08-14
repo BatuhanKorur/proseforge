@@ -34,6 +34,7 @@ export default function DocEditor({ doc }: {
     return parseDocumentContent(doc?.content as string)
   }, [doc?.content, parseDocumentContent])
 
+  // Selection Data Update
   const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const debouncedSelectionUpdate = useCallback((selection: any, editorInstance: any) => {
     if (selectionTimeoutRef.current) {
@@ -47,7 +48,7 @@ export default function DocEditor({ doc }: {
       }
       const selected = editorInstance.state.doc.textBetween(selection.from, selection.to)
       setSelectionData(selection.from, selection.to, selected)
-    }, 300) // 0.3 second delay
+    }, 300)
   }, [setSelectionData])
 
   // Setup the editor instance
@@ -84,6 +85,7 @@ export default function DocEditor({ doc }: {
     },
   })
 
+  // Settings editor instance on store
   useEffect(() => {
     if (editor) {
       setEditorInstance(editor)
@@ -106,6 +108,7 @@ export default function DocEditor({ doc }: {
     }
   }, [doc.id, editor, pingSavedPulse])
 
+  // Save Signal TODO: May need to refactor and simplify
   useEffect(() => {
     if (saveSignal) {
       saveCurrentDoc()
@@ -114,10 +117,18 @@ export default function DocEditor({ doc }: {
   }, [saveCurrentDoc, saveSignal, setSaveSignal])
 
   useShortcut('ctrl+s', saveCurrentDoc)
+
+  const handleContentAreaClick = useCallback(() => {
+    editor?.commands.focus()
+  }, [editor])
+
   return (
     <div className="flex-1 min-w-0 flex flex-col">
       <DocToolbar />
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-8">
+      <div
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-8"
+        onClick={handleContentAreaClick}
+      >
         <div className="mx-auto w-full max-w-3xl">
           { editor && <DocBubble />}
           <EditorContent editor={editor} />
