@@ -2,12 +2,12 @@ import type { SpellCheckResult } from '@/types'
 import { Icon } from '@iconify/react'
 import { useMemo } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { useDocStore } from '@/stores/doc.store'
 import { useUserStore } from '@/stores/user.store'
 
 export default function SpellCheckPanel({ messages }: {
   messages: SpellCheckResult[]
 }) {
-  console.log('My Message:', messages)
   const { ignoredWords } = useUserStore()
 
   const ignoredSet = useMemo(
@@ -45,7 +45,17 @@ function SpellCheckCard({ val, word, expected }: {
   word: string
   expected: string[]
 }) {
+  const { paintDocument } = useDocStore()
   const { ignoreWord } = useUserStore()
+  const handleIgnore = () => {
+    ignoreWord(word)
+    paintDocument()
+  }
+
+  function fixWord(newWord: string) {
+    console.log(word, newWord)
+  }
+
   return (
     <AccordionItem value={String(val)} className="border-b px-4">
       <AccordionTrigger>
@@ -60,18 +70,28 @@ function SpellCheckCard({ val, word, expected }: {
       </AccordionTrigger>
       <AccordionContent>
         <div>
-          { expected.map((expectedWord: string, index: number) => (
-            <button
-              type="button"
-              key={index}
-              className="px-3"
-            >
-              { expectedWord }
-            </button>
-          ))}
+          <p className="text-xs text-muted-foreground mb-1">Expected</p>
+          <div className="space-x-2">
+            { expected.map((expectedWord: string, index: number) => (
+              <button
+                type="button"
+                key={index}
+                className="px-2 border py-1 rounded-md font-medium cursor-pointer"
+                onClick={() => fixWord(expectedWord)}
+              >
+                { expectedWord }
+              </button>
+            ))}
+          </div>
         </div>
-        <div>
-          <button type="button" onClick={() => ignoreWord(word)}>Ignore</button>
+        <div className="justify-end flex">
+          <button
+            type="button"
+            onClick={handleIgnore}
+            className="text-xs font-semibold cursor-pointer opacity-60 transition duration-200 ease-in-out hover:opacity-100"
+          >
+            Ignore
+          </button>
         </div>
       </AccordionContent>
     </AccordionItem>

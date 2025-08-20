@@ -21,6 +21,8 @@ export default function DocEditor({ doc }: {
     setSelectionData,
     setCounts,
     saveDocument,
+    runDocumentAnalysis,
+    paintDocument,
   } = useDocStore()
 
   // Setup initial content from the document
@@ -45,6 +47,26 @@ export default function DocEditor({ doc }: {
     }, 300)
   }, [setSelectionData])
 
+  const analysisTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const scheduleAnalysis = useCallback(() => {
+    if (analysisTimeoutRef.current) {
+      clearTimeout(analysisTimeoutRef.current)
+    }
+
+    analysisTimeoutRef.current = setTimeout(() => {
+      runDocumentAnalysis(true)
+    }, 500)
+  }, [runDocumentAnalysis])
+
+  useEffect(() => {
+    return () => {
+      if (analysisTimeoutRef.current)
+        clearTimeout(analysisTimeoutRef.current)
+      if (selectionTimeoutRef.current)
+        clearTimeout(selectionTimeoutRef.current)
+    }
+  }, [])
+
   // Setup the editor instance
   const editor = useEditor({
     extensions: [
@@ -59,7 +81,7 @@ export default function DocEditor({ doc }: {
         },
       }),
       SpellCheckExtension.configure({
-        errors: ['Madhya'],
+        errors: [''],
       }),
     ],
     content: initialContent,
@@ -72,9 +94,11 @@ export default function DocEditor({ doc }: {
     },
     onCreate: ({ editor }) => {
       setCounts(editor.storage.characterCount)
+      runDocumentAnalysis(true)
     },
     onUpdate: ({ editor }) => {
       setCounts(editor.storage.characterCount)
+      scheduleAnalysis()
     },
     onSelectionUpdate: ({ editor }) => {
       const selection = editor.state.selection

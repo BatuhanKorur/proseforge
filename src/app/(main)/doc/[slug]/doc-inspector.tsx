@@ -1,8 +1,7 @@
 'use client'
 import type { ReviewResult } from '@/types'
 import { Icon } from '@iconify/react'
-import { useCallback, useEffect, useState } from 'react'
-import { analyze } from '@/actions/review.actions'
+import { useState } from 'react'
 import LookupPanel from '@/app/(main)/doc/[slug]/panels/lookup-panel'
 import ReadabilityPanel from '@/app/(main)/doc/[slug]/panels/readability-panel'
 import RewritePanel from '@/app/(main)/doc/[slug]/panels/rewrite-panel'
@@ -17,26 +16,10 @@ enum InspectorTabs {
 }
 
 export function DocInspector() {
-  const { editorInstance } = useDocStore()
+  const { editorInstance, reviewResults } = useDocStore()
 
   const [collapsed, setCollapsed] = useState(false)
   const [activeTab, setActiveTab] = useState(InspectorTabs.ASSIST)
-  const [results, setResults] = useState<ReviewResult | null>(null)
-
-  const getReviewData = useCallback(async () => {
-    const text = editorInstance?.getText()
-    if (!text) {
-      return
-    }
-    const results = await analyze(text)
-    setResults(results)
-    // Consider how you want to use the 'analysis' result if needed.
-    // Currently, it's not being stored or used.
-  }, [editorInstance])
-
-  useEffect(() => {
-    getReviewData()
-  }, [getReviewData])
 
   return (
     <aside
@@ -55,10 +38,8 @@ export function DocInspector() {
             onTabChange={tab => setActiveTab(tab)}
             activeTab={activeTab}
           />
-          {activeTab === InspectorTabs.REVIEW && (
-          // @ts-ignore
-          // TODO
-            <TabReview results={results} />
+          {activeTab === InspectorTabs.REVIEW && reviewResults && (
+            <TabReview results={reviewResults} />
           )}
           {activeTab === InspectorTabs.ASSIST && (
             <TabAssist />
@@ -129,7 +110,6 @@ function TabReview({ results }: { results: ReviewResult }) {
   const [activePanel, setActivePanel] = useState('Spell Check')
   const reviewPanels = ['Spell Check', 'Readability']
 
-  console.log('results', results.readability)
   return (
     <div>
       <div className="flex justify-between divide-x border-b">

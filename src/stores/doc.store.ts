@@ -1,17 +1,24 @@
 import type { Editor } from '@tiptap/core'
 import type { CharacterCountStorage } from '@tiptap/extensions'
-import type { LookupResponse } from '@/types'
+import type { LookupResponse, ReviewResult } from '@/types'
 import { create } from 'zustand'
 import { lookupWord } from '@/actions/ai/lookup.actions'
 import { rewriteWithAi } from '@/actions/ai/rewrite.actions'
 import { persistDocument } from '@/actions/doc.actions'
+import { analyze } from '@/actions/review.actions'
 import { extractPreviewText } from '@/lib/utils'
+import { useUserStore } from '@/stores/user.store'
 
 interface DocStoreState {
   // Main tiptap editor instance
   editorInstance: Editor | null
   setEditorInstance: (editor: Editor | null) => void
   parseDocumentContent: (content: string) => string
+
+  // Review results (spell check, readability, etc.)
+  reviewResults: ReviewResult | null
+  setReviewResults: (results: ReviewResult | null) => void
+  getReviewData: () => Promise<void>
 
   // Counts
   wordCount: number
@@ -38,6 +45,10 @@ interface DocStoreState {
   // Save Document?
   saveDocument: (docId: string) => Promise<boolean>
   isSaved: boolean
+
+  isAnalysisRunning: boolean
+  runDocumentAnalysis: (withPaint: boolean) => void
+  paintDocument: () => void
 }
 
 // @ts-ignore
@@ -57,6 +68,24 @@ export const useDocStore = create<DocStoreState>((set, get) => {
       }
       catch {
         return { type: 'doc', content: [{ type: 'paragraph' }] }
+      }
+    },
+
+    // Review results
+    reviewResults: null,
+    setReviewResults: results => set({ reviewResults: results }),
+    getReviewData: async () => {
+      const { editorInstance } = get()
+      const text = editorInstance?.getText()
+      if (!text) {
+        return
+      }
+      try {
+        const results = await analyze(text)
+        set({ reviewResults: results })
+      }
+      catch (e) {
+        console.error('Error getting review data:', e)
       }
     },
 
@@ -149,6 +178,51 @@ export const useDocStore = create<DocStoreState>((set, get) => {
       catch (e) {
         console.error('Error extracting preview text:', e)
       }
+    },
+
+    isAnalysisRunning: false,
+    runDocumentAnalysis: async (withPaint = false) => {
+      const { editorInstance, paintDocument } = get()
+      set({ isAnalysisRunning: true })
+      if (!editorInstance) {
+        return null
+      }
+
+      const text = editorInstance?.getText()
+      if (!text) {
+        return null
+      }
+
+      try {
+        const results = await analyze(text)
+        set({ reviewResults: results })
+        if (withPaint) {
+          console.log('Ok painting with it')
+          paintDocument()
+        }
+      }
+      catch (e) {
+        console.error('Error analyzing document:', e)
+      }
+      finally {
+        set({ isAnalysisRunning: false })
+      }
+    },
+
+    paintDocument: () => {
+      const { reviewResults, editorInstance } = get()
+      if (!reviewResults || !editorInstance) {
+        return null
+      }
+      const ignoredWords = useUserStore.getState().ignoredWords
+      const ignoredSet = new Set((ignoredWords ?? []).map(w => w.trim().toLowerCase()))
+      const filteredSpellcheckWords = reviewResults.spellcheckWords.filter(
+        item => !ignoredSet.has(item.trim().toLowerCase()),
+      )
+
+      console.log(ignoredWords)
+      // @ts-ignore
+      editorInstance.commands.setSpellErrors(filteredSpellcheckWords)
     },
   }
 })
