@@ -221,9 +221,11 @@ function NavSecondary() {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="sm">
-                <Icon icon="lucide:cog" />
-                <p>Settings</p>
+              <SidebarMenuButton asChild>
+                <Link href="/settings">
+                  <Icon icon="lucide:cog" />
+                  <p>Settings</p>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

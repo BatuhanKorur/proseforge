@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createDocument } from '@/actions/doc.actions'
 import DocCard from '@/components/doc-card'
 import ErrorLayout from '@/components/error-layout'
+import PageTitle from '@/components/page-title'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -48,7 +49,7 @@ export default function DocumentsBrowser({ docs }: { docs: Document[] }) {
   return (
     <div className="flex flex-col h-full px-4">
       <div className="flex flex-col mt-8 mb-4 md:flex-row md:w-full">
-        <h1 className="text-3xl font-semibold mb-1 w-full">Documents</h1>
+        <PageTitle title="Documents" />
         <div className="flex items-center gap-3">
           { docs.length > 0 && (
             <Input
