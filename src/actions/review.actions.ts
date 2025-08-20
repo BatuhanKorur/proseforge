@@ -1,28 +1,10 @@
 'use server'
 
+import type { ReadabilityResult, ReviewResult, SpellCheckResult } from '@/types'
 import dictionaryEn from 'dictionary-en'
 import { retext } from 'retext'
 import retextReadability from 'retext-readability'
 import retextSpell from 'retext-spell'
-
-export interface SpellCheckResult {
-  word: string
-  expected: string[]
-  message: string
-  actual: string
-}
-
-export interface ReadabilityResult {
-  reason: string
-  sentence: string
-  score: [number, number]
-}
-
-export interface AnalysisResult {
-  spellcheck: SpellCheckResult[]
-  spellcheckWords: string[]
-  readability: ReadabilityResult[]
-}
 
 function groupBySource(messages: any[]) {
   return messages.reduce<Record<string, any[]>>((acc, message) => {
@@ -34,7 +16,7 @@ function groupBySource(messages: any[]) {
   }, {})
 }
 
-export async function analyze(text: string): Promise<AnalysisResult> {
+export async function analyze(text: string): Promise<ReviewResult> {
   const check = await retext()
     .use(retextReadability)
     .use(retextSpell, { dictionary: dictionaryEn })

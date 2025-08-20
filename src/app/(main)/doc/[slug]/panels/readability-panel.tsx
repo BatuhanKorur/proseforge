@@ -1,4 +1,4 @@
-import type { ReadabilityResult } from '@/actions/review.actions'
+import type { ReadabilityResult } from '@/types'
 import { Icon } from '@iconify/react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 

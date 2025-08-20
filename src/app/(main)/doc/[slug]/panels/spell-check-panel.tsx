@@ -1,12 +1,12 @@
 import { Icon } from '@iconify/react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
-export default function SpellCheckPanel({ checks }: {
-  checks: any[]
+export default function SpellCheckPanel({ messages }: {
+  messages: any[]
 }) {
   return (
     <Accordion type="single" collapsible>
-      {checks.map((check: any, index: number) => (
+      {messages.map((check: any, index: number) => (
         <SpellCheckCard
           key={index}
           val={index}

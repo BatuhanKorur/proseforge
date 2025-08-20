@@ -1,8 +1,8 @@
 import type { Editor } from '@tiptap/core'
 import type { LookupResponse } from '@/types'
 import { create } from 'zustand'
+import { lookupWord } from '@/actions/ai/lookup.actions'
 import { rewriteWithAi } from '@/actions/ai/rewrite.actions'
-import { lookupWord } from '@/actions/ai/word.actions'
 
 interface DocStoreState {
   editorInstance: Editor | null
@@ -24,7 +24,7 @@ interface DocStoreState {
 
   isWaitingResponse: boolean
   currentAction: string
-  rewriteResults: string[]
+  rewriteResults: { id: string, text: string }[]
   lookupResults: LookupResponse | null
   getRewriteSuggestions: () => void
   getLookupResults: () => void

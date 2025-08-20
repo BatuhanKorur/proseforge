@@ -13,15 +13,25 @@ export async function lookupWord(word: string) {
       body: JSON.stringify({
         model: 'mistral:latest',
         prompt: `
-        For the word "${word}", provide the meaning and synonyms. 
-        Try to give at least 3 synonyms, and max 7.
+        For the word "${word}", provide the definition and synonyms. 
         Definition should be a simple, short phrase that describes the meaning of the word.
-        Return a response, in the following format:
         
+        Synonyms must be between 2 to 5. Synonyms must be related to the word in some way.
+        
+        Return a response, in the following format:
         {
           word: "${word}",
           definition: "Meaning of the word",
-          synonyms: ["synonym1", "synonym2",...]
+          synonyms: [
+          {
+          word: "synonym1",
+          definition: "Definition of synonym1",
+          },
+          {
+          word: "synonym2",
+          definition: "Definition of synonym2",
+          },
+          ]
         }
         
         `,

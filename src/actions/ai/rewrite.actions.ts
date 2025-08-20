@@ -15,8 +15,28 @@ export async function rewriteWithAi(text: string) {
       body: JSON.stringify({
         model: 'mistral:latest',
         prompt: `
-        Rewrite the following text to improve/correct it. Give three examples of improvements.
-        Return a response, in a javascript array of strings. Don't add any titles to the examples (for example Improvement 1, Example 2 etc.)
+        Rewrite the following text by improving and correcting it.
+        Give 3 examples of improvements.
+        First example should be a general improvement.
+        Second example should be shorter and more concise.
+        Third example can be a little longer, while being specific and related to the original text.
+        
+        Return the rewritten text with the following format:
+        [
+          {
+            "id": "general",
+            "text": "..."
+          },
+          {
+            "id": "shorter",
+            "text": "..."
+          },
+          {
+            "id": "specific",
+            "text": "..."
+          }
+        ]
+
                 
         Here is the original text:
         ${text}
@@ -31,9 +51,10 @@ export async function rewriteWithAi(text: string) {
     }
 
     const data = await response.json()
-    return JSON.parse(data.response)
+    const r = JSON.parse(data.response)
+    return r
   }
-  catch {
-    console.error('Error validating text')
+  catch (error) {
+    console.error('Error validating text', error)
   }
 }

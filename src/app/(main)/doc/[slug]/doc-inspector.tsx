@@ -1,70 +1,48 @@
 'use client'
-
-import type { ComponentProps } from 'react'
-import type { ReadabilityResult, SpellCheckResult } from '@/actions/review.actions'
+import type { ReviewResult } from '@/types'
 import { Icon } from '@iconify/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { analyze } from '@/actions/review.actions'
-import AssistPanel from '@/app/(main)/doc/[slug]/panels/assist-panel'
+import LookupPanel from '@/app/(main)/doc/[slug]/panels/lookup-panel'
 import ReadabilityPanel from '@/app/(main)/doc/[slug]/panels/readability-panel'
+import RewritePanel from '@/app/(main)/doc/[slug]/panels/rewrite-panel'
 import SpellCheckPanel from '@/app/(main)/doc/[slug]/panels/spell-check-panel'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
-import { DocInspectorType, DocPanelType } from '@/types'
+
+enum InspectorTabs {
+  REVIEW = 'review',
+  ASSIST = 'assist',
+}
 
 export function DocInspector() {
-  const { isWaitingResponse, currentAction, editorInstance } = useDocStore()
-  const [collapsed, setCollapsed] = useState(true)
-  const [inspectorPanel, setInspectorPanel] = useState<DocInspectorType>(DocInspectorType.ANALYSIS)
-  const [activePanel, setActivePanel] = useState(DocPanelType.SPELLCHECK)
+  const { editorInstance } = useDocStore()
 
-  const [spellChecks, setSpellChecks] = useState<SpellCheckResult[]>([])
-  const [readability, setReadability] = useState<ReadabilityResult[]>([])
+  const [collapsed, setCollapsed] = useState(false)
+  const [activeTab, setActiveTab] = useState(InspectorTabs.ASSIST)
+  const [results, setResults] = useState<ReviewResult | null>(null)
 
-  const handleAnalysis = async () => {
-    setInspectorPanel(DocInspectorType.ANALYSIS)
+  const getReviewData = useCallback(async () => {
     const text = editorInstance?.getText()
     if (!text) {
       return
     }
-
-    const m = await analyze(text)
-    setSpellChecks(m.spellcheck)
-    setReadability(m.readability)
-
-    try {
-      // @ts-ignore
-      editorInstance?.commands.setSpellErrors(m.spellcheckWords || [])
-    }
-    catch (e) {
-      console.error('Error setting spell errors:', e)
-    }
-  }
-
-  const handleAssist = async () => {
-    setInspectorPanel(DocInspectorType.ASSIST)
-  }
-
-  useEffect(() => {
-    handleAnalysis()
+    const results = await analyze(text)
+    console.log(results)
+    setResults(results)
+    // Consider how you want to use the 'analysis' result if needed.
+    // Currently, it's not being stored or used.
   }, [editorInstance])
 
   useEffect(() => {
-    if (isWaitingResponse) {
-      console.log('OK something changed bro')
-      console.log('current action:', currentAction)
-    }
-  }, [isWaitingResponse, currentAction])
+    getReviewData()
+  }, [getReviewData])
 
   return (
     <aside
-      id="right-panel"
       aria-expanded={!collapsed}
       onClick={collapsed ? () => setCollapsed(false) : undefined}
-      role={collapsed ? 'button' : undefined}
-      tabIndex={collapsed ? 0 : -1}
-      title={collapsed ? 'Expand' : undefined}
       className={cn([
         'relative transition-all duration-200 ease-in-out',
         'border rounded-md ml-4 flex flex-col h-full',
@@ -72,57 +50,19 @@ export function DocInspector() {
     >
       { collapsed && <Icon icon="ion:ellipsis-vertical" className="size-5" /> }
       { !collapsed && (
-        <div
-          id="right-panel-content"
-          aria-hidden={collapsed}
-          className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full transition-opacity duration-200`}
-        >
-          <div className="flex h-8 border-b">
-            <div className="border-r w-12 flex items-center justify-center shrink-0">
-              <Button
-                onClick={() => setCollapsed(true)}
-                variant="ghost"
-                size="icon"
-                className="size-6"
-              >
-                <Icon icon="octicon:sidebar-collapse-24" />
-              </Button>
-            </div>
-            <div className="w-full flex items-center">
-              <button
-                type="button"
-                onClick={handleAnalysis}
-                className="px-6 text-sm border-r h-full font-medium cursor-pointer"
-              >
-                Analysis
-              </button>
-              <button
-                type="button"
-                onClick={handleAssist}
-                className="px-6 text-sm border-r h-full font-medium cursor-pointer"
-              >
-                Assist
-              </button>
-            </div>
-          </div>
-          { inspectorPanel === DocInspectorType.ASSIST && (
-            <AssistPanel />
+        <div className={`${collapsed ? 'pointer-events-none opacity-0' : 'opacity-100'} h-full transition-opacity duration-200`}>
+          <InspectorHeading
+            onCollapse={() => setCollapsed(true)}
+            onTabChange={tab => setActiveTab(tab)}
+            activeTab={activeTab}
+          />
+          {activeTab === InspectorTabs.REVIEW && (
+          // @ts-ignore
+          // TODO
+            <TabReview results={results} />
           )}
-          { inspectorPanel === DocInspectorType.ANALYSIS && (
-            <div>
-              <div className="border-t flex justify-between divide-x border-b">
-                <DocPanelButton label="Spell" onClick={() => setActivePanel(DocPanelType.SPELLCHECK)} />
-                <DocPanelButton label="Readability" onClick={() => setActivePanel(DocPanelType.READABILITY)} />
-              </div>
-              <div className="h-full overflow-y-scroll">
-                { activePanel === DocPanelType.SPELLCHECK && (
-                  <SpellCheckPanel checks={spellChecks} />
-                )}
-                { activePanel === DocPanelType.READABILITY && (
-                  <ReadabilityPanel messages={readability} />
-                )}
-              </div>
-            </div>
+          {activeTab === InspectorTabs.ASSIST && (
+            <TabAssist />
           )}
         </div>
       )}
@@ -130,16 +70,83 @@ export function DocInspector() {
   )
 }
 
-export function DocPanelButton({ label, ...props }: ComponentProps<'button'> & {
-  label: string
+function InspectorHeading({ onCollapse, onTabChange, activeTab }: {
+  onCollapse: () => void
+  onTabChange: (tab: InspectorTabs) => void
+  activeTab: InspectorTabs
 }) {
+  const tabs = Object.values(InspectorTabs)
   return (
-    <button
-      type="button"
-      className="w-full h-14 text-sm cursor-pointer"
-      {...props}
-    >
-      { label }
-    </button>
+    <div className="border-b h-9 flex">
+      <div className="border-r w-12 flex items-center justify-center shrink-0">
+        <Button
+          onClick={onCollapse}
+          variant="ghost"
+          size="icon"
+          className="size-6"
+        >
+          <Icon icon="octicon:sidebar-collapse-24" />
+        </Button>
+      </div>
+      <div className="space-x-2 flex items-center px-2">
+        { tabs.map(tab => (
+          <button
+            type="button"
+            key={tab}
+            onClick={() => onTabChange(tab)}
+            className={cn([
+              'cursor-pointer capitalize px-4 rounded-full text-[13px] font-medium transition duration-200 ease-in-out',
+            ], activeTab === tab ? 'bg-muted' : 'opacity-75 hover:opacity-100')}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+function TabAssist() {
+  const { currentAction } = useDocStore()
+
+  if (currentAction === 'lookup') {
+    return (
+      <LookupPanel />
+    )
+  }
+
+  if (currentAction === 'rewrite') {
+    return (
+      <RewritePanel />
+    )
+  }
+  return (
+    <div className="h-full flex items-center justify-center">
+      <p className="px-20 text-muted-foreground text-center text-sm">Select a word for lookup or a text for review suggestions</p>
+    </div>
+  )
+}
+
+function TabReview({ results }: { results: ReviewResult }) {
+  const [activePanel, setActivePanel] = useState('Spell Check')
+  const reviewPanels = ['Spell Check', 'Readability']
+
+  console.log('results', results.readability)
+  return (
+    <div>
+      <div className="flex justify-between divide-x border-b">
+        { reviewPanels.map(panel => (
+          <button
+            key={panel}
+            type="button"
+            className={cn(['w-full h-14 text-sm cursor-pointer'], activePanel === panel ? 'font-medium' : 'opacity-50')}
+            onClick={() => setActivePanel(panel)}
+          >
+            { panel }
+          </button>
+        ))}
+      </div>
+      {activePanel === 'Spell Check' && <SpellCheckPanel messages={results.spellcheck} />}
+      {activePanel === 'Readability' && <ReadabilityPanel messages={results.readability} />}
+    </div>
   )
 }
