@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core'
 import type { CharacterCountStorage } from '@tiptap/extensions'
 import type { LookupResponse, ReviewResult } from '@/types'
+import { toast } from 'sonner'
 import { create } from 'zustand'
 import { lookupWord } from '@/actions/ai/lookup.actions'
 import { rewriteWithAi } from '@/actions/ai/rewrite.actions'
@@ -154,13 +155,12 @@ export const useDocStore = create<DocStoreState>((set, get) => {
     saveDocument: async (docId: string) => {
       const { editorInstance } = get()
       if (!editorInstance) {
-        console.error('No editor instance to save document with')
         return false
       }
 
       const json = editorInstance?.getJSON()
       if (!json) {
-        console.error('No content to save')
+        toast.error('Error gathering document content')
         return false
       }
 
@@ -176,7 +176,9 @@ export const useDocStore = create<DocStoreState>((set, get) => {
         }, 2500)
       }
       catch (e) {
-        console.error('Error extracting preview text:', e)
+        toast.error('Error occurred while saving document. Please try again.')
+        console.error(e)
+        return false
       }
     },
 

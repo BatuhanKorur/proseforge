@@ -10,8 +10,8 @@ export async function getDocuments() {
       },
     })
   }
-  catch (e) {
-    console.error('Error fetching documents:', e)
+  catch {
+    return false
   }
 }
 
@@ -19,8 +19,8 @@ export async function getDocumentById(id: string) {
   try {
     return await prisma.document.findFirst({ where: { id } })
   }
-  catch (e) {
-    console.error('Error fetching document:', e)
+  catch {
+    return false
   }
 }
 
@@ -34,8 +34,8 @@ export async function persistDocument(docId: string, content: string, preview: s
       },
     })
   }
-  catch (error) {
-    console.error('Error saving document:', error)
+  catch {
+    return false
   }
 }
 

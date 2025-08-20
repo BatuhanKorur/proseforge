@@ -46,7 +46,7 @@ export default function DocumentsBrowser({ docs }: { docs: Document[] }) {
   const hasMore = visibleCount < filtered.length
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full px-4">
       <div className="flex flex-col mt-8 mb-4 md:flex-row md:w-full">
         <h1 className="text-3xl font-semibold mb-1 w-full">Documents</h1>
         <div className="flex items-center gap-3">
