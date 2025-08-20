@@ -29,7 +29,6 @@ export function DocInspector() {
       return
     }
     const results = await analyze(text)
-    console.log(results)
     setResults(results)
     // Consider how you want to use the 'analysis' result if needed.
     // Currently, it's not being stored or used.

@@ -1,4 +1,4 @@
-export type OllamaStatus = 'checking' | 'running' | 'offline'
+export type OllamaStatus = 'checking' | 'online' | 'offline'
 
 export interface FavoriteItem {
   title: string

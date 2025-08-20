@@ -1,23 +1,18 @@
 'use client'
-import type { LucideIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import type { OllamaStatus } from '@/types'
-import {
-  ChevronRight,
-  FileText,
-  Folder,
-  LifeBuoy,
-  Send,
-  Settings,
-} from 'lucide-react'
+import { Icon } from '@iconify/react'
+import { FileText, Folder } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import Link from 'next/link'
+
 import { useEffect, useState } from 'react'
 import * as React from 'react'
 import { pingOllama } from '@/actions/lama.actions'
 import Logo from '@/components/logo'
 import { NavUser } from '@/components/nav-user'
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -34,51 +29,71 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useUserStore } from '@/stores/user.store'
 
-const data = {
-  user: {
-    name: 'John Doe',
-    email: 'johnny@mail.com',
-    avatar: '/duck.jpg',
+const STATUS_CLASS: Record<OllamaStatus, string> = {
+  online: 'bg-green-500',
+  offline: 'bg-red-500',
+  checking: 'bg-yellow-500 animate-pulse',
+}
+
+interface NavItem {
+  title: string
+  url: string
+  icon: React.FC<any>
+  isActive?: boolean
+  items?: {
+    title: string
+    url: string
+  }[]
+}
+
+const navigation: NavItem[] = [
+  {
+    title: 'Documents',
+    url: '/',
+    icon: FileText,
   },
-  navMain: [
-    {
-      title: 'Documents',
-      url: '/',
-      icon: FileText,
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Support',
-      url: '/',
-      icon: LifeBuoy,
-    },
-    {
-      title: 'Feedback',
-      url: '/',
-      icon: Send,
-    },
-  ],
+]
+
+const user = {
+  name: 'John Doe',
+  email: 'johnny@mail.com',
+  avatar: '/duck.jpg',
 }
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const [showSettings, setShowSettings] = useState(false)
-  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('checking')
-  const favorites = useUserStore(s => s.favorites)
+  return (
+    <Sidebar variant="inset" {...props}>
+      <NavHeading />
+      <SidebarContent>
+        <NavMain />
+        <NavFavorites />
+        <NavSecondary />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
+    </Sidebar>
+  )
+}
 
+function NavHeading() {
+  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('checking')
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
+
+    ;(async function fetchOllamaStatus() {
       try {
         const ok = await pingOllama()
         if (!cancelled)
-          setOllamaStatus(ok ? 'running' : 'offline')
+          setOllamaStatus(ok ? 'online' : 'offline')
       }
-      catch {
+      catch (err) {
         if (!cancelled)
           setOllamaStatus('offline')
+        console.error('Failed to check Ollama status', err)
       }
     })()
 
@@ -87,99 +102,44 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
     }
   }, [])
 
-  const statusDotClass = ollamaStatus === 'running'
-    ? 'bg-green-500'
-    : ollamaStatus === 'offline'
-      ? 'bg-red-500'
-      : 'bg-yellow-500 animate-pulse'
-
-  const statusText = ollamaStatus === 'running' ? 'Online' : ollamaStatus === 'offline' ? 'Offline' : 'Checking...'
-
-  const handleOpenSettings = () => {
-    console.log('Hello')
-  }
+  const statusDotClass = STATUS_CLASS[ollamaStatus]
 
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
-                <div className="bg-black text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
-                  <Logo className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Prose Forge</span>
-                  <span className="truncate text-xs flex items-center gap-1">
-                    <span className={`inline-block size-2 rounded-full ${statusDotClass}`} />
-                    {statusText}
-                  </span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <SidebarGroup>
-          <SidebarGroupLabel>Favorites</SidebarGroupLabel>
-          <SidebarMenu>
-            { favorites.map(favorite => (
-              <SidebarMenuItem key={favorite.id}>
-                <SidebarMenuButton asChild>
-                  <Link href={favorite.id}>
-                    <div className="flex items-center gap-2">
-                      <Folder className="size-3" />
-                      <span>{favorite.title}</span>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup {...props} className="mt-auto">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem onClick={handleOpenSettings}>
-                <SidebarMenuButton asChild size="sm">
-                  <div>
-                    <Settings />
-                    <p>Settings</p>
-                  </div>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+    <SidebarHeader>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" asChild>
+            <Link href="/">
+              <div className="bg-black text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
+                <Logo className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">Prose Forge</span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span className="truncate text-xs flex items-center gap-1">
+                      <span className={`inline-block size-2 rounded-full capitalize ${statusDotClass}`} />
+                      {ollamaStatus}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>Ollama status</span>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarHeader>
   )
 }
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}) {
+export function NavMain() {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map(item => (
+        {navigation.map(item => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
@@ -193,7 +153,7 @@ export function NavMain({
                     <>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuAction className="data-[state=open]:rotate-90">
-                          <ChevronRight />
+                          <Icon icon="lucide:chevron-right" />
                           <span className="sr-only">Toggle</span>
                         </SidebarMenuAction>
                       </CollapsibleTrigger>
@@ -218,5 +178,66 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
+  )
+}
+
+function NavFavorites() {
+  const favorites = useUserStore(s => s.favorites)
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Favorites</SidebarGroupLabel>
+      <SidebarMenu>
+        { favorites.map(favorite => (
+          <SidebarMenuItem key={favorite.id}>
+            <SidebarMenuButton asChild>
+              <Link href={favorite.id}>
+                <div className="flex items-center gap-2">
+                  <Folder className="size-3" />
+                  <span>{favorite.title}</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
+  )
+}
+
+function NavSecondary() {
+  const { setTheme } = useTheme()
+  return (
+    <SidebarContent>
+      <SidebarGroup className="mt-auto">
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="sm">
+                <Icon icon="lucide:cog" />
+                <p>Settings</p>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton>
+                    <Icon icon="lucide:moon" />
+                    <p>Theme</p>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" align="end">
+                  <DropdownMenuItem onClick={() => setTheme('dark')}>
+                    <p>Dark</p>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme('light')}>
+                    <p>Light</p>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
   )
 }
