@@ -11,6 +11,8 @@ interface UserStoreState {
 
   ignoredWords: string[]
   ignoreWord: (word: string) => void
+  removeIgnoredWord: (word: string) => void
+
 }
 
 export const useUserStore = create<UserStoreState>()(persist(
@@ -50,6 +52,17 @@ export const useUserStore = create<UserStoreState>()(persist(
         if (current.includes(normalized))
           return { ignoredWords: current }
         return { ignoredWords: [normalized, ...current] }
+      }),
+    removeIgnoredWord: word =>
+      set((state) => {
+        const normalized = (word ?? '').trim().toLowerCase()
+        if (!normalized)
+          return {}
+
+        // Defensive: handle any bad persisted shape
+        const current = Array.isArray(state.ignoredWords) ? state.ignoredWords : []
+
+        return { ignoredWords: current.filter(w => w !== normalized) }
       }),
 
   }),

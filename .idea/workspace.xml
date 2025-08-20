@@ -5,14 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9689bb51-0c63-43df-bafb-45bd03e081b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/(main)/settings/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/page-title.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(main)/settings/general-settings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(main)/settings/ignored-words-table.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(main)/settings/user-profile-settings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/ui/table-pagination.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/styles/document.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/styles/document.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/styles/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/styles/tiptap.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/app-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app-sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/doc-browser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doc-browser.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actions/lama.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/lama.actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/settings/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/settings/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/stores/user.store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/stores/user.store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,8 +24,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript JSX File" />
         <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
