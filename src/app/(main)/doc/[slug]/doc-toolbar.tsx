@@ -14,6 +14,7 @@ import { useDocStore } from '@/stores/doc.store'
 
 export default function DocToolbar() {
   const { editorInstance, characterCount, wordCount } = useDocStore()
+
   if (!editorInstance) {
     return <></>
   }
@@ -115,10 +116,14 @@ function ToolButton({
   icon,
   label,
   isActive = false,
+  disabled = false,
+  className,
   ...props
 }: ComponentProps<'button'> & {
   icon: string
+  className?: string
   label?: string
+  disabled?: boolean
   isActive?: boolean
 }) {
   return (
@@ -128,7 +133,7 @@ function ToolButton({
           type="button"
           className={cn([
             'size-6.5 hover:bg-muted inline-flex items-center justify-center rounded-md cursor-pointer',
-          ], isActive ? 'bg-muted' : '')}
+          ], isActive ? 'bg-muted' : '', disabled ? 'opacity-50 cursor-not-allowed' : '', className)}
           {...props}
         >
           <Icon icon={icon} className="size-4" />

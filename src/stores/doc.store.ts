@@ -1,19 +1,24 @@
 import type { Editor } from '@tiptap/core'
+import type { CharacterCountStorage } from '@tiptap/extensions'
 import type { LookupResponse } from '@/types'
 import { create } from 'zustand'
 import { lookupWord } from '@/actions/ai/lookup.actions'
 import { rewriteWithAi } from '@/actions/ai/rewrite.actions'
+import { persistDocument } from '@/actions/doc.actions'
+import { extractPreviewText } from '@/lib/utils'
 
 interface DocStoreState {
+  // Main tiptap editor instance
   editorInstance: Editor | null
   setEditorInstance: (editor: Editor | null) => void
-  wordCount: number
-  setWordCount: (count: number) => void
-  characterCount: number
-  setCharacterCount: (count: number) => void
-
   parseDocumentContent: (content: string) => string
 
+  // Counts
+  wordCount: number
+  characterCount: number
+  setCounts: (characterCount: CharacterCountStorage) => void
+
+  // Selection Data (What part of the document is currently selected)
   selectionData: {
     from: number
     to: number
@@ -22,6 +27,7 @@ interface DocStoreState {
   }
   setSelectionData: (from: number, to: number, selected: string) => void
 
+  // Lookup and Rewrite State
   isWaitingResponse: boolean
   currentAction: string
   rewriteResults: { id: string, text: string }[]
@@ -29,12 +35,9 @@ interface DocStoreState {
   getRewriteSuggestions: () => void
   getLookupResults: () => void
 
-  saveSignal: boolean
-  setSaveSignal: (b: boolean) => void
-
-  showSavedPulse: boolean
-  pingSavedPulse: () => void
-
+  // Save Document?
+  saveDocument: (docId: string) => Promise<boolean>
+  isSaved: boolean
 }
 
 // @ts-ignore
@@ -42,13 +45,9 @@ export const useDocStore = create<DocStoreState>((set, get) => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 
   return {
+    // Editor Instance
     editorInstance: null,
     setEditorInstance: editor => set({ editorInstance: editor }),
-    wordCount: 0,
-    setWordCount: count => set({ wordCount: count }),
-    characterCount: 0,
-    setCharacterCount: count => set({ characterCount: count }),
-
     parseDocumentContent: (content) => {
       if (!content) {
         return { type: 'doc', content: [{ type: 'paragraph' }] }
@@ -60,6 +59,14 @@ export const useDocStore = create<DocStoreState>((set, get) => {
         return { type: 'doc', content: [{ type: 'paragraph' }] }
       }
     },
+
+    // Counts
+    wordCount: 0,
+    characterCount: 0,
+    setCounts: (characterCount: CharacterCountStorage) => set({
+      wordCount: characterCount.words(),
+      characterCount: characterCount.characters(),
+    }),
 
     // Selection Data
     selectionData: {
@@ -114,23 +121,34 @@ export const useDocStore = create<DocStoreState>((set, get) => {
       }
     },
 
-    // Save Signal
-    saveSignal: false,
-    setSaveSignal: (value) => {
-      set({ saveSignal: value })
-    },
-
-    // Save Pulse
-    showSavedPulse: false,
-    pingSavedPulse: () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
+    isSaving: false,
+    saveDocument: async (docId: string) => {
+      const { editorInstance } = get()
+      if (!editorInstance) {
+        console.error('No editor instance to save document with')
+        return false
       }
-      set({ showSavedPulse: true })
-      timeoutId = setTimeout(() => {
-        set({ showSavedPulse: false })
-      }, 2500)
-    },
 
+      const json = editorInstance?.getJSON()
+      if (!json) {
+        console.error('No content to save')
+        return false
+      }
+
+      try {
+        const previewText = extractPreviewText(editorInstance)
+        await persistDocument(docId, JSON.stringify(json), previewText)
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+        set({ isSaved: true })
+        timeoutId = setTimeout(() => {
+          set({ isSaved: false })
+        }, 2500)
+      }
+      catch (e) {
+        console.error('Error extracting preview text:', e)
+      }
+    },
   }
 })

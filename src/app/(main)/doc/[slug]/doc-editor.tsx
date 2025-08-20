@@ -6,26 +6,21 @@ import { CharacterCount } from '@tiptap/extensions'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { persistDocument } from '@/actions/doc.actions'
 import DocBubble from '@/app/(main)/doc/[slug]/doc-bubble'
 import DocToolbar from '@/app/(main)/doc/[slug]/doc-toolbar'
 import { useShortcut } from '@/hooks/use-keyboard'
 import { SpellCheckExtension } from '@/lib/tiptap-spellcheck'
-import { extractPreviewText } from '@/lib/utils'
 import { useDocStore } from '@/stores/doc.store'
 
 export default function DocEditor({ doc }: {
   doc: Document
 }) {
   const {
-    saveSignal,
     parseDocumentContent,
-    setSaveSignal,
-    pingSavedPulse,
     setEditorInstance,
     setSelectionData,
-    setCharacterCount,
-    setWordCount,
+    setCounts,
+    saveDocument,
   } = useDocStore()
 
   // Setup initial content from the document
@@ -75,9 +70,11 @@ export default function DocEditor({ doc }: {
         spellCheck: 'false',
       },
     },
+    onCreate: ({ editor }) => {
+      setCounts(editor.storage.characterCount)
+    },
     onUpdate: ({ editor }) => {
-      setCharacterCount(editor.storage.characterCount.characters())
-      setWordCount(editor.storage.characterCount.words())
+      setCounts(editor.storage.characterCount)
     },
     onSelectionUpdate: ({ editor }) => {
       const selection = editor.state.selection
@@ -92,31 +89,7 @@ export default function DocEditor({ doc }: {
     }
   }, [editor, setEditorInstance])
 
-  // Save the current document when necessary
-  const saveCurrentDoc = useCallback(async () => {
-    const json = editor?.getJSON()
-    if (!json) {
-      return
-    }
-    try {
-      const previewText = extractPreviewText(editor)
-      await persistDocument(doc.id, JSON.stringify(json), previewText)
-      pingSavedPulse()
-    }
-    catch (e) {
-      console.error('Error persisting document:', e)
-    }
-  }, [doc.id, editor, pingSavedPulse])
-
-  // Save Signal TODO: May need to refactor and simplify
-  useEffect(() => {
-    if (saveSignal) {
-      saveCurrentDoc()
-      setSaveSignal(false)
-    }
-  }, [saveCurrentDoc, saveSignal, setSaveSignal])
-
-  useShortcut('ctrl+s', saveCurrentDoc)
+  useShortcut('ctrl+s', () => saveDocument(doc.id))
 
   const handleContentAreaClick = useCallback(() => {
     editor?.commands.focus()

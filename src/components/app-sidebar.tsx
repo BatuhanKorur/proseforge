@@ -189,14 +189,23 @@ function NavFavorites() {
       <SidebarMenu>
         { favorites.map(favorite => (
           <SidebarMenuItem key={favorite.id}>
-            <SidebarMenuButton asChild>
-              <Link href={favorite.id}>
-                <div className="flex items-center gap-2">
-                  <Folder className="size-3" />
-                  <span>{favorite.title}</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger className="w-full">
+                <SidebarMenuButton asChild>
+                  <Link href={favorite.id}>
+                    <div className="flex items-center gap-2 w-full">
+                      <div className="shrink-0">
+                        <Folder className="size-3" />
+                      </div>
+                      <div className="text-sm line-clamp-1">{favorite.title}</div>
+                    </div>
+                  </Link>
+                </SidebarMenuButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{ favorite.title }</span>
+              </TooltipContent>
+            </Tooltip>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
