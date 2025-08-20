@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9689bb51-0c63-43df-bafb-45bd03e081b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/lookup-panel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/rewrite-panel.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions/ai/rewrite.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/ai/rewrite.actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions/ai/word.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/ai/lookup.actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions/review.actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/review.actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/doc-inspector.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/assist-panel.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/readability-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/readability-panel.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/spell-check-panel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/doc/[slug]/panels/spell-check-panel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/stores/doc.store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/stores/doc.store.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/stores/user.store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/stores/user.store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
