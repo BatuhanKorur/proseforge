@@ -1,9 +1,6 @@
-
 .tiptap {
     @apply focus:outline-none;
 }
-
-
 .spell-error {
     color: red !important;
     text-decoration: underline;
@@ -47,19 +44,22 @@
     @apply text-[16px] leading-snug font-semibold uppercase tracking-wide mt-4 mb-2 text-muted-foreground;
 }
 
+.doc-edit u {
+  text-decoration-line: none;
+}
 /* Paragraphs and links */
 .doc-edit p {
     @apply text-[18px] font-normal text-primary;
 }
 .doc-edit a {
-    @apply underline underline-offset-4 decoration-1 text-primary-foreground/90;
+    @apply underline underline-offset-4 decoration-1 text-indigo-300;
 }
 .doc-edit a:hover {
-    @apply text-primary-foreground;
+    @apply text-indigo-300/80 cursor-pointer;
 }
-.doc-edit p a {
-    @apply text-indigo-200; /* preserves your existing anchor color inside paragraphs */
-}
+/*.doc-edit p a {
+    @apply text-indigo-200; !* preserves your existing anchor color inside paragraphs *!
+}*/
 
 /* Emphasis and inline formatting */
 .doc-edit strong,
@@ -70,9 +70,7 @@
 .doc-edit i {
     @apply italic;
 }
-.doc-edit u {
-    @apply underline;
-}
+
 .doc-edit s,
 .doc-edit del {
     @apply line-through text-muted-foreground;

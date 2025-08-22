@@ -26,7 +26,6 @@ export default function SpellCheckPanel({ messages }: {
 
   return (
     <Accordion type="single" collapsible>
-      <div>{ JSON.stringify(ignoredWords)}</div>
       {filteredMessages
         .map((check: any, index: number) => (
           <SpellCheckCard

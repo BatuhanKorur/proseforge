@@ -14,7 +14,6 @@ interface DocStoreState {
   // Main tiptap editor instance
   editorInstance: Editor | null
   setEditorInstance: (editor: Editor | null) => void
-  parseDocumentContent: (content: string) => string
 
   // Review results (spell check, readability, etc.)
   reviewResults: ReviewResult | null
@@ -60,17 +59,6 @@ export const useDocStore = create<DocStoreState>((set, get) => {
     // Editor Instance
     editorInstance: null,
     setEditorInstance: editor => set({ editorInstance: editor }),
-    parseDocumentContent: (content) => {
-      if (!content) {
-        return { type: 'doc', content: [{ type: 'paragraph' }] }
-      }
-      try {
-        return JSON.parse(content)
-      }
-      catch {
-        return { type: 'doc', content: [{ type: 'paragraph' }] }
-      }
-    },
 
     // Review results
     reviewResults: null,
@@ -199,7 +187,6 @@ export const useDocStore = create<DocStoreState>((set, get) => {
         const results = await analyze(text)
         set({ reviewResults: results })
         if (withPaint) {
-          console.log('Ok painting with it')
           paintDocument()
         }
       }

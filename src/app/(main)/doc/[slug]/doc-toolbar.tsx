@@ -1,12 +1,14 @@
 'use client'
 import type { ComponentProps } from 'react'
 import { Icon } from '@iconify/react'
+import { useEffect, useRef, useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
@@ -71,10 +73,8 @@ export default function DocToolbar() {
         icon="tabler:code"
         label="Code"
       />
-      <ToolButton
-        icon="tabler:link"
-        label="Link"
-      />
+      <ToolLink />
+
       <Separator orientation="vertical" className="mx-1.5" />
       <ToolButton
         icon="tabler:align-left"
@@ -109,6 +109,106 @@ export default function DocToolbar() {
         </Tooltip>
       </div>
     </div>
+  )
+}
+
+function ToolLink() {
+  const { editorInstance } = useDocStore()
+  const [isOpen, setOpen] = useState(false)
+  const [link, setLink] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!editorInstance) return
+
+    const updateLinkState = () => {
+      const link = editorInstance?.getAttributes('link').href || ''
+      if (link) {
+        setLink(link)
+        setOpen(true)
+        inputRef.current?.focus()
+      }
+      else {
+        setLink('')
+        setOpen(false)
+      }
+    }
+    editorInstance.on('selectionUpdate', updateLinkState)
+
+    return () => {
+      editorInstance.off('selectionUpdate', updateLinkState)
+    }
+  }, [editorInstance])
+
+  function handleLinkOpen() {
+    if (!editorInstance) return
+    console.log('Handle Link Open')
+  }
+
+  function handleSetLink() {
+    if (!editorInstance) return
+    const href = link.trim()
+    editorInstance.chain().focus().setLink({
+      href,
+    }).run()
+    console.log('Handle Link')
+  }
+
+  function handleUnlink() {
+    if (!editorInstance) return
+    editorInstance.chain().focus().unsetLink().run()
+    editorInstance.commands.focus()
+    setOpen(false)
+  }
+
+  return (
+    <Popover open={isOpen}>
+      <PopoverTrigger asChild>
+        <ToolButton
+          icon="tabler:link"
+          label="Link"
+          onClick={() => setOpen(true)}
+        />
+      </PopoverTrigger>
+      <PopoverContent className="inline-flex p-1 min-w-80">
+        <div className="flex-1 flex pl-2 items-center border-r my-1">
+          <input
+            ref={inputRef}
+            type="url"
+            inputMode="url"
+            className="h-full text-sm w-full focus:outline-none"
+            placeholder="Paste a link..."
+            value={link}
+            onChange={e => setLink(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleSetLink()
+              }
+            }}
+          />
+          <div className="mr-2">
+            <Icon icon="mi:enter" className="size-4.5 opacity-40" />
+          </div>
+        </div>
+        <div className="flex space-x-1 px-1">
+          <button
+            type="button"
+            className="size-8.5 flex items-center justify-center cursor-pointer rounded-md transition duration-200 ease-in-out hover:bg-muted"
+            onClick={handleLinkOpen}
+          >
+            <Icon icon="tabler:external-link" className="size-4.5 opacity-80" />
+          </button>
+          <button
+            type="button"
+            className="size-8.5 flex items-center justify-center cursor-pointer rounded-md transition duration-200 ease-in-out hover:bg-muted"
+            onClick={handleUnlink}
+          >
+            <Icon icon="tabler:link-off" className="size-4.5 opacity-80" />
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 

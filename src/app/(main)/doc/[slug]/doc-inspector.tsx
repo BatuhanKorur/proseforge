@@ -19,7 +19,7 @@ export function DocInspector() {
   const { editorInstance, reviewResults } = useDocStore()
 
   const [collapsed, setCollapsed] = useState(false)
-  const [activeTab, setActiveTab] = useState(InspectorTabs.ASSIST)
+  const [activeTab, setActiveTab] = useState(InspectorTabs.REVIEW)
 
   return (
     <aside
